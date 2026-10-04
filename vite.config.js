@@ -9,7 +9,6 @@ export default defineConfig({
 
         proxy: {
             "/api": {
-                //target: "http://localhost:8080",
                 target: "https://engineeringai-java-modernization.victoriouscliff-8a4c40e2.southindia.azurecontainerapps.io",
                 changeOrigin: true
             }
