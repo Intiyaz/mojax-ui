@@ -1,0 +1,17 @@
+const s=(v:unknown)=>String(v??"").toUpperCase();
+export const statusTone=(v:unknown)=>s(v)==="PASSED"?"green":s(v)==="FAILED"?"red":s(v)==="TIMEOUT"?"orange":"gray";
+export const statusLabel=(v:unknown)=>s(v)==="PASSED"?"Passed":s(v)==="FAILED"?"Attention Required":s(v)==="TIMEOUT"?"Timed Out":s(v)==="SKIPPED"?"Skipped":"Unknown";
+export const statusIndicator=(v:unknown)=>s(v)==="PASSED"?"good":s(v)==="FAILED"?"bad":s(v)==="TIMEOUT"?"warning":"neutral";
+export const numberTone=(v:unknown)=>Number(v)===0?"green":Number(v)<=3?"orange":"red";
+export const numberStatus=(v:unknown)=>Number(v)===0?"Clean":Number(v)<=3?"Review":"Action Required";
+export const numberIndicator=(v:unknown)=>Number(v)===0?"good":Number(v)<=3?"warning":"bad";
+export const riskTone=(v:unknown)=>s(v)==="LOW"?"green":s(v)==="MEDIUM"?"orange":s(v)==="HIGH"?"red":s(v)==="CRITICAL"?"critical":"gray";
+export const riskStatus=(v:unknown)=>s(v)==="LOW"?"Low Risk":s(v)==="MEDIUM"?"Review":s(v)==="HIGH"?"Action Required":s(v)==="CRITICAL"?"Critical":"Unknown";
+export const riskIndicator=(v:unknown)=>s(v)==="LOW"?"good":s(v)==="MEDIUM"?"warning":s(v)==="HIGH"||s(v)==="CRITICAL"?"bad":"neutral";
+export const riskScoreTone=(v:number)=>v>=75?"critical":v>=50?"red":v>=25?"orange":"green";
+export const riskScoreStatus=(v:number)=>v>=75?"Critical":v>=50?"High Risk":v>=25?"Moderate":"Low Risk";
+export const riskScoreIndicator=(v:number)=>v>=50?"bad":v>=25?"warning":"good";
+export const readinessTone=(v:number)=>v>=80?"green":v>=60?"blue":v>=40?"orange":"red";
+export const readinessStatus=(v:number)=>v>=80?"Ready":v>=60?"Moderate":v>=40?"Needs Work":"Low Readiness";
+export const readinessIndicator=(v:number)=>v>=80?"good":v>=50?"warning":"bad";
+export const indicatorIcon=(v:string)=>v==="good"?"✓ ":v==="bad"?"✕ ":"● ";
