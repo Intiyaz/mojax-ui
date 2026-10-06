@@ -16,6 +16,8 @@ import PaymentPage from "./components/pages/PaymentPage";
 import JavaEvolutionPage from "./components/pages/JavaEvolutionPage";
 import PqcHistoryPage from "./components/pages/PqcHistoryPage";
 import { OrganizationProvider } from "./context/OrganizationContext";
+import ContactUsPage from "./components/pages/ContactUsPage";
+
 export default function App() {
     return (<BrowserRouter>
 
@@ -34,7 +36,10 @@ export default function App() {
 
         <Route path="/learn/pqc-history" element={<PqcHistoryPage />}/>
 
+        <Route path="/contact-us" element={<ContactUsPage />}/>
+
         <Route element={<AppLayout />}>
+        
           <Route path="/dashboard" element={<DashboardPage />}/>
 
           <Route path="/organizations" element={<OrganizationsPage />}/>

@@ -2910,7 +2910,6 @@ html {
 .java-topic-visual {
     position: relative;
     min-height: 310px;
-    padding: 20px;
     border: 1px solid #ece6f7;
     border-radius: 16px;
     background:
@@ -2928,4 +2927,6 @@ html {
 .java-logo {
     max-width: 800px;
     height: 600px;
+    align-content: center;
 }
+

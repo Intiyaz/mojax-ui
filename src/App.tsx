@@ -23,6 +23,7 @@ import RegisterPage from "./components/pages/RegisterPage";
 import PaymentPage from "./components/pages/PaymentPage";
 import JavaEvolutionPage from "./components/pages/JavaEvolutionPage";
 import PqcHistoryPage from "./components/pages/PqcHistoryPage";
+import ContactUsPage from "./components/pages/ContactUsPage";
 import {
   OrganizationProvider
 } from "./context/OrganizationContext";
@@ -62,6 +63,11 @@ export default function App() {
         <Route
           path="/learn/pqc-history"
           element={<PqcHistoryPage />}
+        />
+
+        <Route
+          path="/contact-us"
+          element={<ContactUsPage />}
         />
 
         <Route

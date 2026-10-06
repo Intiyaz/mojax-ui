@@ -46,10 +46,6 @@ export default function LandingPage() {
 
                 <div className="landing-links">
 
-                    <a href="#capabilities">
-                        Capabilities
-                    </a>
-
                     <a href="#journey">
                         How It Works
                     </a>
@@ -65,6 +61,17 @@ export default function LandingPage() {
                     <a href="#why">
                         Why MoJaX
                     </a>
+
+                <button
+                    type="button"
+                    className="landing-nav-resource"
+                    onClick={() =>
+                        navigate("/contact-us")
+                    }
+                >
+                    Contact Us
+                </button>
+
 
                 </div>
 
@@ -371,71 +378,113 @@ export default function LandingPage() {
             CAPABILITIES
            ================================================= */}
 
-                <section id="capabilities" className="capabilities-section">
-
+            <section
+                    id="capabilities"
+                    className="capabilities-section"
+                >
                     <div className="section-heading">
 
-                        <span className="section-kicker">
-                            ONE MODERNIZATION PLATFORM
-                        </span>
-
-                        <h2>
-                            Five factories.
+                        <h1>
+                            From registration to
                             <span>
-                                {" "}One modernization journey.
+                                {" "}modernization insights.
                             </span>
-                        </h2>
+                        </h1>
 
-                        <p>
-                            Specialized AI capabilities work
-                            together to analyze, modernize,
-                            secure and validate enterprise
-                            Java applications.
-                        </p>
 
                     </div>
 
 
-                    <div className="factory-grid">
+                    <div className="app-guide-grid">
 
-                        <FactoryCard icon="↗" className="factory-blue" title="Modernization Factory" description="Upgrade legacy Java and enterprise frameworks through controlled migration paths." items={[
-            "Java 8 → 11 → 17 → 21",
-            "JEE → Spring Boot",
-            "Spring Boot Upgrades",
-            "Monolith → Microservices"
-        ]}/>
-
-
-                        <FactoryCard icon="⇄" className="factory-purple" title="Transformation Factory" description="Modernize enterprise data transformation and integration layers." items={[
-            "XML ↔ JSON",
-            "XSLT & XPath",
-            "XQuery",
-            "XSD & JSON Schema"
-        ]}/>
-
-
-                        <FactoryCard icon="◇" className="factory-orange" title="Security Factory" description="Discover security exposure and prepare applications for emerging threats." items={[
-            "OWASP Analysis",
-            "Dependency Security",
-            "Crypto Inventory",
-            "PQC Migration"
-        ]}/>
+                        <GuideCard
+                            number="01"
+                            icon="✦"
+                            className="guide-purple"
+                            title="Register"
+                            description="Create your MoJaX account and organization."
+                            items={[
+                                "Enter your account details",
+                                "Create your organization",
+                                "Select a plan",
+                                "Start with the free assessment"
+                            ]}
+                        />
 
 
-                        <FactoryCard icon="⌁" className="factory-green" title="Quality & Diagnostics" description="Turn runtime and quality evidence into actionable engineering intelligence." items={[
-            "JVM Diagnostics",
-            "Thread & Heap Analysis",
-            "JFR & GC Analysis",
-            "Sonar Intelligence"
-        ]}/>
+                        <GuideCard
+                            number="02"
+                            icon="→"
+                            className="guide-blue"
+                            title="Sign In"
+                            description="Access your secure MoJaX workspace."
+                            items={[
+                                "Sign in with your account",
+                                "Access your dashboard",
+                                "View available assessments",
+                                "Track your scan usage"
+                            ]}
+                        />
 
 
-                        <FactoryCard icon="✦" className="factory-ai" title="AI Engineering Factory" description="AI-guided engineering across the complete modernization lifecycle." items={[
-            "Modernization Planning",
-            "Code Generation",
-            "Test Generation",
-            "Review & Validation"
-        ]}/>
+                        <GuideCard
+                            number="03"
+                            icon="◎"
+                            className="guide-cyan"
+                            title="Complete Organization Profile"
+                            description="Add the organization information used across your workspace."
+                            items={[
+                                "Organization details",
+                                "Business address",
+                                "Country and location",
+                                "Keep company information current"
+                            ]}
+                        />
+
+
+                        <GuideCard
+                            number="04"
+                            icon="▣"
+                            className="guide-orange"
+                            title="Create a Project"
+                            description="Register the Java application you want MoJaX to assess."
+                            items={[
+                                "Enter project name",
+                                "Add repository URL",
+                                "Specify default branch",
+                                "Describe the application"
+                            ]}
+                        />
+
+
+                        <GuideCard
+                            number="05"
+                            icon="⚙"
+                            className="guide-green"
+                            title="Run an Assessment"
+                            description="Let MoJaX analyze your Java application and produce evidence-based findings."
+                            items={[
+                                "Select your project",
+                                "Choose the assessment agent",
+                                "Start the scan",
+                                "Review risks and recommendations"
+                            ]}
+                        />
+
+
+                        <GuideCard
+                            number="06"
+                            icon="⇩"
+                            className="guide-pink"
+                            title="Download the Report"
+                            description="Turn the assessment into a shareable modernization document."
+                            items={[
+                                "Review assessment results",
+                                "Open detailed findings",
+                                "Review remediation guidance",
+                                "Download the PDF report"
+                            ]}
+                        />
 
                     </div>
 
@@ -688,6 +737,58 @@ function FactoryCard({ icon, title, description, items, className }) {
             </div>
 
         </article>);
+}
+
+function GuideCard({
+    number,
+    icon,
+    title,
+    description,
+    items,
+    className
+}) {
+
+    return (
+
+        <article
+            className={`app-guide-card ${className}`}
+        >
+
+            <div className="guide-card-header">
+
+                <div className="guide-card-icon">
+                    {icon}
+                </div>
+
+                <span className="guide-step-number">
+                    STEP {number}
+                </span>
+
+            </div>
+
+            <h3>
+                {title}
+            </h3>
+
+            <p>
+                {description}
+            </p>
+
+            <div className="guide-items">
+
+                {items.map(item => (
+
+                    <span key={item}>
+                        <i>✓</i>
+                        {item}
+                    </span>
+
+                ))}
+
+            </div>
+
+        </article>
+    );
 }
 function VersionCard({ version, label, target = false }) {
     return (<div className={target
