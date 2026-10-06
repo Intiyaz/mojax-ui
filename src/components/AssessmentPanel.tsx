@@ -76,13 +76,21 @@ export default function AssessmentPanel({
     const currentJava =
         scalar(
             metrics.currentJavaVersion,
-            "?"
+            summaryValue(
+                assessment.summary,
+                "Current Java Version",
+                "?"
+            )
         );
 
     const targetJava =
         scalar(
             metrics.targetJavaVersion,
-            "21"
+            summaryValue(
+                assessment.summary,
+                "Target Java Version",
+                "21"
+            )
         );
 
 
@@ -389,6 +397,39 @@ export default function AssessmentPanel({
             </section>
         </section>
     );
+}
+
+
+function summaryValue(
+    summary: string | null | undefined,
+    label: string,
+    fallback: string
+): string {
+
+    if (
+        summary == null
+        ||
+        summary.trim().length === 0
+    ) {
+        return fallback;
+    }
+
+    const escapedLabel =
+        label.replace(
+            /[.*+?^${}()|[\]\\]/g,
+            "\\$&"
+        );
+
+    const match =
+        summary.match(
+            new RegExp(
+                `^${escapedLabel}:\\s*(.+)$`,
+                "im"
+            )
+        );
+
+    return match?.[1]?.trim()
+        || fallback;
 }
 
 

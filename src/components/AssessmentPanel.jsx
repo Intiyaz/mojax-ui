@@ -21,8 +21,22 @@ export default function AssessmentPanel({ assessment, projectName }) {
     const isPqcMigration = assessment.agentCode ===
         "PQC_MIGRATION";
     const metrics = assessment.metrics || {};
-    const currentJava = scalar(metrics.currentJavaVersion, "?");
-    const targetJava = scalar(metrics.targetJavaVersion, "21");
+    const currentJava = scalar(
+        metrics.currentJavaVersion,
+        summaryValue(
+            assessment.summary,
+            "Current Java Version",
+            "?"
+        )
+    );
+    const targetJava = scalar(
+        metrics.targetJavaVersion,
+        summaryValue(
+            assessment.summary,
+            "Target Java Version",
+            "21"
+        )
+    );
     return (<section id="assessment-report-content" className="assessment-report">
             <section className="assessment">
 
@@ -214,6 +228,37 @@ export default function AssessmentPanel({ assessment, projectName }) {
             </section>
         </section>);
 }
+function summaryValue(
+    summary,
+    label,
+    fallback
+) {
+    if (
+        summary == null
+        ||
+        summary.trim().length === 0
+    ) {
+        return fallback;
+    }
+
+    const escapedLabel =
+        label.replace(
+            /[.*+?^${}()|[\]\\]/g,
+            "\\$&"
+        );
+
+    const match =
+        summary.match(
+            new RegExp(
+                `^${escapedLabel}:\\s*(.+)$`,
+                "im"
+            )
+        );
+
+    return match?.[1]?.trim()
+        || fallback;
+}
+
 function scalar(value, fallback) {
     if (typeof value === "string"
         ||

@@ -31,10 +31,6 @@ export default function ExecutiveSummary({
 
             <div className="summary">
 
-                <div className="summary-icon">
-                    AI
-                </div>
-
                 <p>
                     {summary}
                 </p>
