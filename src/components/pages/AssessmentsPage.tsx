@@ -24,6 +24,8 @@ import type {
   Project
 } from "../../services/projectApi";
 
+import "../styles/assessmentProgress.css";
+
 
 export default function AssessmentsPage() {
 
@@ -217,6 +219,78 @@ export default function AssessmentsPage() {
         assessment.status
         === "FAILED"
     ).length;
+
+
+  const selectedProjectProgress =
+    useMemo(
+      () => {
+
+        if (
+          projectFilter === "ALL"
+        ) {
+
+          return null;
+        }
+
+
+        const completedJavaAssessments =
+          assessments
+            .filter(
+              assessment =>
+                assessment.projectId
+                  === projectFilter
+                &&
+                assessment.status
+                  === "COMPLETED"
+                &&
+                assessment.agentCode
+                  === "JAVA_MIGRATION"
+            )
+            .sort(
+              (
+                left,
+                right
+              ) =>
+                toTimestamp(
+                  right.createdAt
+                )
+                -
+                toTimestamp(
+                  left.createdAt
+                )
+            );
+
+
+        if (
+          completedJavaAssessments.length
+            < 2
+        ) {
+
+          return {
+            current:
+              completedJavaAssessments[0]
+              ?? null,
+
+            previous:
+              null
+          };
+        }
+
+
+        return {
+          current:
+            completedJavaAssessments[0],
+
+          previous:
+            completedJavaAssessments[1]
+        };
+
+      },
+      [
+        assessments,
+        projectFilter
+      ]
+    );
 
 
   return (
@@ -438,6 +512,227 @@ export default function AssessmentsPage() {
         </label>
 
       </div>
+
+
+      {/* MODERNIZATION PROGRESS */}
+
+      {
+        projectFilter !== "ALL"
+        &&
+        selectedProjectProgress
+        &&
+        (
+
+          <section className="modernization-progress-panel">
+
+            <div className="modernization-progress-header">
+
+              <div>
+
+                <span className="modernization-progress-kicker">
+
+                  MODERNIZATION PROGRESS
+
+                </span>
+
+
+                <h2>
+
+                  {
+                    projectMap.get(
+                      projectFilter
+                    )
+                    ||
+                    "Selected Project"
+                  }
+
+                </h2>
+
+
+                <p>
+
+                  Compare the two most recent completed
+                  Java Migration assessments for this project.
+
+                </p>
+
+              </div>
+
+
+              {
+                selectedProjectProgress.previous
+                &&
+                (
+
+                  <div className="modernization-progress-run-label">
+
+                    <span>
+                      Latest comparison
+                    </span>
+
+                    <strong>
+                      {
+                        formatShortDate(
+                          selectedProjectProgress
+                            .current
+                            ?.createdAt
+                        )
+                      }
+                    </strong>
+
+                  </div>
+
+                )
+              }
+
+            </div>
+
+
+            {
+              selectedProjectProgress.current
+              &&
+              selectedProjectProgress.previous
+              ?
+              (
+
+                <>
+
+                  <div className="modernization-progress-grid">
+
+                    <ProgressMetric
+                      label="Java Readiness"
+                      previousValue={
+                        selectedProjectProgress
+                          .previous
+                          .readinessScore
+                      }
+                      currentValue={
+                        selectedProjectProgress
+                          .current
+                          .readinessScore
+                      }
+                      higherIsBetter
+                    />
+
+
+                    <ProgressMetric
+                      label="Migration Risk"
+                      previousValue={
+                        selectedProjectProgress
+                          .previous
+                          .riskScore
+                      }
+                      currentValue={
+                        selectedProjectProgress
+                          .current
+                          .riskScore
+                      }
+                      higherIsBetter={false}
+                    />
+
+
+                    <div className="modernization-progress-card">
+
+                      <span>
+                        Previous Assessment
+                      </span>
+
+                      <strong className="modernization-progress-date">
+
+                        {
+                          formatShortDate(
+                            selectedProjectProgress
+                              .previous
+                              .createdAt
+                          )
+                        }
+
+                      </strong>
+
+                      <small>
+
+                        Baseline used for this comparison.
+
+                      </small>
+
+                    </div>
+
+
+                    <div className="modernization-progress-card">
+
+                      <span>
+                        Current Assessment
+                      </span>
+
+                      <strong className="modernization-progress-date">
+
+                        {
+                          formatShortDate(
+                            selectedProjectProgress
+                              .current
+                              .createdAt
+                          )
+                        }
+
+                      </strong>
+
+                      <small>
+
+                        Most recent completed Java Migration scan.
+
+                      </small>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="modernization-progress-note">
+
+                    <span>
+                      ✓
+                    </span>
+
+                    <p>
+
+                      Re-run the Java Migration assessment after
+                      remediation to keep this progress view current.
+                      Risk should move down while readiness should
+                      move up.
+
+                    </p>
+
+                  </div>
+
+                </>
+
+              )
+              :
+              (
+
+                <div className="modernization-progress-empty">
+
+                  <strong>
+                    One more completed Java Migration assessment is needed.
+                  </strong>
+
+                  <p>
+
+                    MoJaX will show readiness improvement and risk
+                    reduction after this project has at least two
+                    completed Java Migration assessments.
+
+                  </p>
+
+                </div>
+
+              )
+            }
+
+          </section>
+
+        )
+      }
 
 
       {/* LOADING */}
@@ -728,6 +1023,128 @@ function SummaryCard({
 
 /*
  * ============================================================
+ * MODERNIZATION PROGRESS
+ * ============================================================
+ */
+
+function ProgressMetric({
+  label,
+  previousValue,
+  currentValue,
+  higherIsBetter
+}: {
+  label: string;
+  previousValue?: number;
+  currentValue?: number;
+  higherIsBetter: boolean;
+}) {
+
+  const previous =
+    toNumber(
+      previousValue
+    );
+
+
+  const current =
+    toNumber(
+      currentValue
+    );
+
+
+  const delta =
+    previous === null
+    ||
+    current === null
+      ? null
+      : current - previous;
+
+
+  const improved =
+    delta === null
+      ? null
+      : higherIsBetter
+        ? delta > 0
+        : delta < 0;
+
+
+  const unchanged =
+    delta === 0;
+
+
+  const deltaClass =
+    unchanged
+      ? "neutral"
+      : improved
+        ? "positive"
+        : "negative";
+
+
+  return (
+
+    <div className="modernization-progress-card">
+
+      <span>
+
+        {label}
+
+      </span>
+
+
+      <div className="modernization-score-flow">
+
+        <strong>
+
+          {
+            previous === null
+              ? "—"
+              : previous.toFixed(1)
+          }
+
+        </strong>
+
+
+        <i>
+          →
+        </i>
+
+
+        <strong>
+
+          {
+            current === null
+              ? "—"
+              : current.toFixed(1)
+          }
+
+        </strong>
+
+      </div>
+
+
+      <small
+        className={
+          `modernization-progress-delta ${deltaClass}`
+        }
+      >
+
+        {
+          delta === null
+            ? "Score unavailable"
+            : formatDelta(
+                delta,
+                higherIsBetter
+              )
+        }
+
+      </small>
+
+    </div>
+  );
+}
+
+
+/*
+ * ============================================================
  * STATUS
  * ============================================================
  */
@@ -851,6 +1268,128 @@ function formatDate(
 
     return value;
   }
+}
+
+
+function toNumber(
+  value?: number
+) {
+
+  if (
+    value === undefined
+    ||
+    value === null
+  ) {
+
+    return null;
+  }
+
+
+  const result =
+    Number(
+      value
+    );
+
+
+  return Number.isFinite(
+    result
+  )
+    ? result
+    : null;
+}
+
+
+function toTimestamp(
+  value?: string
+) {
+
+  if (!value) {
+
+    return 0;
+  }
+
+
+  const result =
+    new Date(
+      value
+    ).getTime();
+
+
+  return Number.isFinite(
+    result
+  )
+    ? result
+    : 0;
+}
+
+
+function formatShortDate(
+  value?: string
+) {
+
+  if (!value) {
+
+    return "—";
+  }
+
+
+  try {
+
+    return new Intl.DateTimeFormat(
+      "en-IN",
+      {
+        dateStyle:
+          "medium"
+      }
+    ).format(
+      new Date(
+        value
+      )
+    );
+
+  } catch {
+
+    return value;
+  }
+}
+
+
+function formatDelta(
+  delta: number,
+  higherIsBetter: boolean
+) {
+
+  if (delta === 0) {
+
+    return "No change";
+  }
+
+
+  const amount =
+    Math.abs(
+      delta
+    ).toFixed(
+      1
+    );
+
+
+  const improved =
+    higherIsBetter
+      ? delta > 0
+      : delta < 0;
+
+
+  if (improved) {
+
+    return higherIsBetter
+      ? `↑ ${amount} readiness improvement`
+      : `↓ ${amount} risk reduction`;
+  }
+
+
+  return higherIsBetter
+    ? `↓ ${amount} readiness decline`
+    : `↑ ${amount} risk increase`;
 }
 
 

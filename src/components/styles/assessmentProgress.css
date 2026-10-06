@@ -1,0 +1,229 @@
+/* =========================================================
+   MODERNIZATION PROGRESS
+   ========================================================= */
+
+.modernization-progress-panel {
+  margin: 22px 0 26px;
+  padding: 24px;
+  border: 1px solid #dfe7f2;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, #f7f5ff 0%, #ffffff 52%, #f3fbf7 100%);
+  box-shadow: 0 12px 34px rgba(58, 73, 112, .08);
+}
+
+.modernization-progress-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.modernization-progress-kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: #7c3aed;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.35px;
+}
+
+.modernization-progress-header h2 {
+  margin: 0;
+  color: #1f4268;
+  font-size: 23px;
+  line-height: 1.2;
+}
+
+.modernization-progress-header p {
+  margin: 7px 0 0;
+  color: #75869b;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.modernization-progress-run-label {
+  min-width: 150px;
+  padding: 11px 13px;
+  border: 1px solid #e2e8f2;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .86);
+  text-align: right;
+}
+
+.modernization-progress-run-label span {
+  display: block;
+  color: #8a99aa;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+}
+
+.modernization-progress-run-label strong {
+  display: block;
+  margin-top: 3px;
+  color: #345879;
+  font-size: 11px;
+}
+
+.modernization-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.modernization-progress-card {
+  min-height: 138px;
+  padding: 18px;
+  border: 1px solid #e2e8f1;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 7px 20px rgba(40, 70, 110, .05);
+}
+
+.modernization-progress-card > span {
+  display: block;
+  color: #7f8fa2;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+}
+
+.modernization-score-flow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.modernization-score-flow strong {
+  color: #244d75;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.modernization-score-flow i {
+  color: #b3bfd0;
+  font-size: 14px;
+  font-style: normal;
+}
+
+.modernization-progress-delta {
+  display: inline-block;
+  margin-top: 13px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 850;
+}
+
+.modernization-progress-delta.positive {
+  background: #e9f9f0;
+  color: #087a52;
+}
+
+.modernization-progress-delta.negative {
+  background: #fff0f2;
+  color: #bd4050;
+}
+
+.modernization-progress-delta.neutral {
+  background: #f1f4f8;
+  color: #6f7f92;
+}
+
+.modernization-progress-date {
+  display: block;
+  margin-top: 17px;
+  color: #4d3fb2;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.modernization-progress-card > small:not(.modernization-progress-delta) {
+  display: block;
+  margin-top: 12px;
+  color: #8a98a9;
+  font-size: 8px;
+  line-height: 1.55;
+}
+
+.modernization-progress-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 12px 14px;
+  border: 1px solid #cee9dc;
+  border-radius: 11px;
+  background: #f3fcf7;
+}
+
+.modernization-progress-note > span {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #10a36b;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.modernization-progress-note p {
+  margin: 1px 0 0;
+  color: #587566;
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.modernization-progress-empty {
+  padding: 24px;
+  border: 1px dashed #cfd8e5;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .75);
+  text-align: center;
+}
+
+.modernization-progress-empty strong {
+  color: #345879;
+  font-size: 12px;
+}
+
+.modernization-progress-empty p {
+  max-width: 620px;
+  margin: 7px auto 0;
+  color: #8090a3;
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+@media (max-width: 1050px) {
+  .modernization-progress-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .modernization-progress-panel {
+    padding: 18px;
+  }
+
+  .modernization-progress-header {
+    flex-direction: column;
+  }
+
+  .modernization-progress-run-label {
+    width: 100%;
+    text-align: left;
+  }
+
+  .modernization-progress-grid {
+    grid-template-columns: 1fr;
+  }
+}

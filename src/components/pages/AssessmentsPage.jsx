@@ -1,70 +1,293 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getAssessments } from "../../services/assessmentApi";
-import { getProjects } from "../../services/projectApi";
+import {
+  useEffect,
+  useMemo,
+  useState
+} from "react";
+
+import {
+  useNavigate
+} from "react-router-dom";
+
+import {
+  getAssessments
+} from "../../services/assessmentApi";
+
+import {
+  getProjects
+} from "../../services/projectApi";
+
+import "../styles/assessmentProgress.css";
+
+
 export default function AssessmentsPage() {
-    const navigate = useNavigate();
-    const [assessments, setAssessments] = useState([]);
-    const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [projectFilter, setProjectFilter] = useState("ALL");
-    const [statusFilter, setStatusFilter] = useState("ALL");
-    useEffect(() => {
-        loadPage();
-    }, []);
-    async function loadPage() {
-        try {
-            setLoading(true);
-            setError(null);
-            const [assessmentData, projectData] = await Promise.all([
-                getAssessments(),
-                getProjects()
-            ]);
-            setAssessments(Array.isArray(assessmentData)
-                ? assessmentData
-                : []);
-            setProjects(Array.isArray(projectData)
-                ? projectData
-                : []);
-        }
-        catch (err) {
-            setError(getErrorMessage(err, "Unable to load assessments."));
-        }
-        finally {
-            setLoading(false);
-        }
+
+  const navigate =
+    useNavigate();
+
+
+  const [
+    assessments,
+    setAssessments
+  ] =
+    useState(
+      []
+    );
+
+
+  const [
+    projects,
+    setProjects
+  ] =
+    useState(
+      []
+    );
+
+
+  const [
+    loading,
+    setLoading
+  ] =
+    useState(true);
+
+
+  const [
+    error,
+    setError
+  ] =
+    useState(
+      null
+    );
+
+
+  const [
+    projectFilter,
+    setProjectFilter
+  ] =
+    useState("ALL");
+
+
+  const [
+    statusFilter,
+    setStatusFilter
+  ] =
+    useState("ALL");
+
+
+  useEffect(
+    () => {
+
+      loadPage();
+
+    },
+    []
+  );
+
+
+  async function loadPage() {
+
+    try {
+
+      setLoading(
+        true
+      );
+
+
+      setError(
+        null
+      );
+
+
+      const [
+        assessmentData,
+        projectData
+      ] =
+        await Promise.all([
+          getAssessments(),
+          getProjects()
+        ]);
+
+
+      setAssessments(
+        Array.isArray(
+          assessmentData
+        )
+          ? assessmentData
+          : []
+      );
+
+
+      setProjects(
+        Array.isArray(
+          projectData
+        )
+          ? projectData
+          : []
+      );
+
+    } catch (err) {
+
+      setError(
+        getErrorMessage(
+          err,
+          "Unable to load assessments."
+        )
+      );
+
+    } finally {
+
+      setLoading(
+        false
+      );
     }
-    const projectMap = useMemo(() => new Map(projects.map(project => [
-        project.id,
-        project.name
-    ])), [
+  }
+
+
+  const projectMap =
+    useMemo(
+      () =>
+        new Map(
+          projects.map(
+            project => [
+              project.id,
+              project.name
+            ]
+          )
+        ),
+      [
         projects
-    ]);
-    const filteredAssessments = useMemo(() => {
-        return assessments.filter(assessment => {
-            const projectMatches = projectFilter === "ALL"
-                ||
-                    assessment.projectId
-                        === projectFilter;
-            const statusMatches = statusFilter === "ALL"
-                ||
-                    assessment.status
-                        === statusFilter;
-            return (projectMatches
-                &&
-                    statusMatches);
-        });
-    }, [
+      ]
+    );
+
+
+  const filteredAssessments =
+    useMemo(
+      () => {
+
+        return assessments.filter(
+          assessment => {
+
+            const projectMatches =
+              projectFilter === "ALL"
+              ||
+              assessment.projectId
+                === projectFilter;
+
+
+            const statusMatches =
+              statusFilter === "ALL"
+              ||
+              assessment.status
+                === statusFilter;
+
+
+            return (
+              projectMatches
+              &&
+              statusMatches
+            );
+          }
+        );
+
+      },
+      [
         assessments,
         projectFilter,
         statusFilter
-    ]);
-    const completedCount = assessments.filter(assessment => assessment.status
-        === "COMPLETED").length;
-    const failedCount = assessments.filter(assessment => assessment.status
-        === "FAILED").length;
-    return (<div className="page-content">
+      ]
+    );
+
+
+  const completedCount =
+    assessments.filter(
+      assessment =>
+        assessment.status
+        === "COMPLETED"
+    ).length;
+
+
+  const failedCount =
+    assessments.filter(
+      assessment =>
+        assessment.status
+        === "FAILED"
+    ).length;
+
+
+  const selectedProjectProgress =
+    useMemo(
+      () => {
+
+        if (
+          projectFilter === "ALL"
+        ) {
+
+          return null;
+        }
+
+
+        const completedJavaAssessments =
+          assessments
+            .filter(
+              assessment =>
+                assessment.projectId
+                  === projectFilter
+                &&
+                assessment.status
+                  === "COMPLETED"
+                &&
+                assessment.agentCode
+                  === "JAVA_MIGRATION"
+            )
+            .sort(
+              (
+                left,
+                right
+              ) =>
+                toTimestamp(
+                  right.createdAt
+                )
+                -
+                toTimestamp(
+                  left.createdAt
+                )
+            );
+
+
+        if (
+          completedJavaAssessments.length
+            < 2
+        ) {
+
+          return {
+            current:
+              completedJavaAssessments[0]
+              ?? null,
+
+            previous:
+              null
+          };
+        }
+
+
+        return {
+          current:
+            completedJavaAssessments[0],
+
+          previous:
+            completedJavaAssessments[1]
+        };
+
+      },
+      [
+        assessments,
+        projectFilter
+      ]
+    );
+
+
+  return (
+
+    <div className="page-content">
 
 
       {/* HEADER */}
@@ -97,7 +320,16 @@ export default function AssessmentsPage() {
         </div>
 
 
-        <button type="button" className="secondary-button" disabled={loading} onClick={loadPage}>
+        <button
+          type="button"
+          className="secondary-button"
+          disabled={
+            loading
+          }
+          onClick={
+            loadPage
+          }
+        >
 
           Refresh
 
@@ -111,29 +343,60 @@ export default function AssessmentsPage() {
       <div className="assessment-summary-grid">
 
 
-        <SummaryCard label="Total Assessments" value={assessments.length}/>
+        <SummaryCard
+          label="Total Assessments"
+          value={
+            assessments.length
+          }
+        />
 
 
-        <SummaryCard label="Completed" value={completedCount}/>
+        <SummaryCard
+          label="Completed"
+          value={
+            completedCount
+          }
+        />
 
 
-        <SummaryCard label="Failed" value={failedCount}/>
+        <SummaryCard
+          label="Failed"
+          value={
+            failedCount
+          }
+        />
 
 
-        <SummaryCard label="Projects Assessed" value={new Set(assessments.map(assessment => assessment.projectId)).size}/>
+        <SummaryCard
+          label="Projects Assessed"
+          value={
+            new Set(
+              assessments.map(
+                assessment =>
+                  assessment.projectId
+              )
+            ).size
+          }
+        />
 
       </div>
 
 
       {/* ERROR */}
 
-      {error
-            &&
-                (<div className="page-error">
+      {
+        error
+        &&
+        (
+
+          <div className="page-error">
 
             {error}
 
-          </div>)}
+          </div>
+
+        )
+      }
 
 
       {/* FILTERS */}
@@ -150,7 +413,17 @@ export default function AssessmentsPage() {
           </span>
 
 
-          <select value={projectFilter} onChange={event => setProjectFilter(event.target.value)}>
+          <select
+            value={
+              projectFilter
+            }
+            onChange={
+              event =>
+                setProjectFilter(
+                  event.target.value
+                )
+            }
+          >
 
             <option value="ALL">
 
@@ -159,11 +432,26 @@ export default function AssessmentsPage() {
             </option>
 
 
-            {projects.map(project => (<option key={project.id} value={project.id}>
+            {
+              projects.map(
+                project => (
+
+                  <option
+                    key={
+                      project.id
+                    }
+                    value={
+                      project.id
+                    }
+                  >
 
                     {project.name}
 
-                  </option>))}
+                  </option>
+
+                )
+              )
+            }
 
           </select>
 
@@ -179,7 +467,17 @@ export default function AssessmentsPage() {
           </span>
 
 
-          <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)}>
+          <select
+            value={
+              statusFilter
+            }
+            onChange={
+              event =>
+                setStatusFilter(
+                  event.target.value
+                )
+            }
+          >
 
             <option value="ALL">
               All Statuses
@@ -208,24 +506,254 @@ export default function AssessmentsPage() {
       </div>
 
 
+      {/* MODERNIZATION PROGRESS */}
+
+      {
+        projectFilter !== "ALL"
+        &&
+        selectedProjectProgress
+        &&
+        (
+
+          <section className="modernization-progress-panel">
+
+            <div className="modernization-progress-header">
+
+              <div>
+
+                <span className="modernization-progress-kicker">
+
+                  MODERNIZATION PROGRESS
+
+                </span>
+
+
+                <h2>
+
+                  {
+                    projectMap.get(
+                      projectFilter
+                    )
+                    ||
+                    "Selected Project"
+                  }
+
+                </h2>
+
+
+                <p>
+
+                  Compare the two most recent completed
+                  Java Migration assessments for this project.
+
+                </p>
+
+              </div>
+
+
+              {
+                selectedProjectProgress.previous
+                &&
+                (
+
+                  <div className="modernization-progress-run-label">
+
+                    <span>
+                      Latest comparison
+                    </span>
+
+                    <strong>
+                      {
+                        formatShortDate(
+                          selectedProjectProgress
+                            .current
+                            ?.createdAt
+                        )
+                      }
+                    </strong>
+
+                  </div>
+
+                )
+              }
+
+            </div>
+
+
+            {
+              selectedProjectProgress.current
+              &&
+              selectedProjectProgress.previous
+              ?
+              (
+
+                <>
+
+                  <div className="modernization-progress-grid">
+
+                    <ProgressMetric
+                      label="Java Readiness"
+                      previousValue={
+                        selectedProjectProgress
+                          .previous
+                          .readinessScore
+                      }
+                      currentValue={
+                        selectedProjectProgress
+                          .current
+                          .readinessScore
+                      }
+                      higherIsBetter
+                    />
+
+
+                    <ProgressMetric
+                      label="Migration Risk"
+                      previousValue={
+                        selectedProjectProgress
+                          .previous
+                          .riskScore
+                      }
+                      currentValue={
+                        selectedProjectProgress
+                          .current
+                          .riskScore
+                      }
+                      higherIsBetter={false}
+                    />
+
+
+                    <div className="modernization-progress-card">
+
+                      <span>
+                        Previous Assessment
+                      </span>
+
+                      <strong className="modernization-progress-date">
+
+                        {
+                          formatShortDate(
+                            selectedProjectProgress
+                              .previous
+                              .createdAt
+                          )
+                        }
+
+                      </strong>
+
+                      <small>
+
+                        Baseline used for this comparison.
+
+                      </small>
+
+                    </div>
+
+
+                    <div className="modernization-progress-card">
+
+                      <span>
+                        Current Assessment
+                      </span>
+
+                      <strong className="modernization-progress-date">
+
+                        {
+                          formatShortDate(
+                            selectedProjectProgress
+                              .current
+                              .createdAt
+                          )
+                        }
+
+                      </strong>
+
+                      <small>
+
+                        Most recent completed Java Migration scan.
+
+                      </small>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="modernization-progress-note">
+
+                    <span>
+                      ✓
+                    </span>
+
+                    <p>
+
+                      Re-run the Java Migration assessment after
+                      remediation to keep this progress view current.
+                      Risk should move down while readiness should
+                      move up.
+
+                    </p>
+
+                  </div>
+
+                </>
+
+              )
+              :
+              (
+
+                <div className="modernization-progress-empty">
+
+                  <strong>
+                    One more completed Java Migration assessment is needed.
+                  </strong>
+
+                  <p>
+
+                    MoJaX will show readiness improvement and risk
+                    reduction after this project has at least two
+                    completed Java Migration assessments.
+
+                  </p>
+
+                </div>
+
+              )
+            }
+
+          </section>
+
+        )
+      }
+
+
       {/* LOADING */}
 
-      {loading
-            &&
-                (<div className="page-loading">
+      {
+        loading
+        &&
+        (
+
+          <div className="page-loading">
 
             Loading assessments...
 
-          </div>)}
+          </div>
+
+        )
+      }
 
 
       {/* EMPTY */}
 
-      {!loading
-            &&
-                filteredAssessments.length === 0
-            &&
-                (<div className="empty-state">
+      {
+        !loading
+        &&
+        filteredAssessments.length === 0
+        &&
+        (
+
+          <div className="empty-state">
 
             <h3>
 
@@ -242,22 +770,37 @@ export default function AssessmentsPage() {
             </p>
 
 
-            <button type="button" className="primary-button" onClick={() => navigate("/agents")}>
+            <button
+              type="button"
+              className="primary-button"
+              onClick={
+                () =>
+                  navigate(
+                    "/agents"
+                  )
+              }
+            >
 
               Go to Agents
 
             </button>
 
-          </div>)}
+          </div>
+
+        )
+      }
 
 
       {/* TABLE */}
 
-      {!loading
-            &&
-                filteredAssessments.length > 0
-            &&
-                (<div className="assessment-table-wrapper">
+      {
+        !loading
+        &&
+        filteredAssessments.length > 0
+        &&
+        (
+
+          <div className="assessment-table-wrapper">
 
             <table className="assessment-table">
 
@@ -300,15 +843,27 @@ export default function AssessmentsPage() {
 
               <tbody>
 
-                {filteredAssessments.map(assessment => (<tr key={assessment.id}>
+                {
+                  filteredAssessments.map(
+                    assessment => (
+
+                      <tr
+                        key={
+                          assessment.id
+                        }
+                      >
 
                         <td>
 
                           <strong>
 
-                            {projectMap.get(assessment.projectId)
-                            ||
-                                assessment.projectId}
+                            {
+                              projectMap.get(
+                                assessment.projectId
+                              )
+                              ||
+                              assessment.projectId
+                            }
 
                           </strong>
 
@@ -319,7 +874,11 @@ export default function AssessmentsPage() {
 
                           <span className="assessment-agent">
 
-                            {formatAgentCode(assessment.agentCode)}
+                            {
+                              formatAgentCode(
+                                assessment.agentCode
+                              )
+                            }
 
                           </span>
 
@@ -328,43 +887,69 @@ export default function AssessmentsPage() {
 
                         <td>
 
-                          <StatusBadge status={assessment.status}/>
-
-                        </td>
-
-
-                        <td>
-
-                          {formatScore(assessment.riskScore)}
-
-                        </td>
-
-
-                        <td>
-
-                          {formatScore(assessment.readinessScore)}
-
-                        </td>
-
-
-                        <td>
-
-                          {assessment.createdAt
-                            ?
-                                formatDate(assessment.createdAt)
-                            :
-                                "—"}
-
-                        </td>
-
-
-                        <td>
-
-                          <button type="button" className="assessment-view-button" onClick={() => navigate(`/assessments/${assessment.id}`, {
-                            state: {
-                                assessment
+                          <StatusBadge
+                            status={
+                              assessment.status
                             }
-                        })}>
+                          />
+
+                        </td>
+
+
+                        <td>
+
+                          {
+                            formatScore(
+                              assessment.riskScore
+                            )
+                          }
+
+                        </td>
+
+
+                        <td>
+
+                          {
+                            formatScore(
+                              assessment.readinessScore
+                            )
+                          }
+
+                        </td>
+
+
+                        <td>
+
+                          {
+                            assessment.createdAt
+                              ?
+                              formatDate(
+                                assessment.createdAt
+                              )
+                              :
+                              "—"
+                          }
+
+                        </td>
+
+
+                        <td>
+
+                          <button
+                            type="button"
+                            className="assessment-view-button"
+                            onClick={
+                              () =>
+                                navigate(
+                                  `/assessments/${assessment.id}`,
+                                  {
+                                    state: {
+                                      assessment
+                                    }
+                                  }
+                                )
+                            }
+                          >
 
                             View
 
@@ -372,23 +957,40 @@ export default function AssessmentsPage() {
 
                         </td>
 
-                      </tr>))}
+                      </tr>
+
+                    )
+                  )
+                }
 
               </tbody>
 
             </table>
 
-          </div>)}
+          </div>
 
-    </div>);
+        )
+      }
+
+    </div>
+  );
 }
+
+
 /*
  * ============================================================
  * SUMMARY CARD
  * ============================================================
  */
-function SummaryCard({ label, value }) {
-    return (<div className="assessment-summary-card">
+
+function SummaryCard({
+  label,
+  value
+}) {
+
+  return (
+
+    <div className="assessment-summary-card">
 
       <span>
 
@@ -403,61 +1005,382 @@ function SummaryCard({ label, value }) {
 
       </strong>
 
-    </div>);
+    </div>
+  );
 }
+
+
+/*
+ * ============================================================
+ * MODERNIZATION PROGRESS
+ * ============================================================
+ */
+
+function ProgressMetric({
+  label,
+  previousValue,
+  currentValue,
+  higherIsBetter
+}) {
+
+  const previous =
+    toNumber(
+      previousValue
+    );
+
+
+  const current =
+    toNumber(
+      currentValue
+    );
+
+
+  const delta =
+    previous === null
+    ||
+    current === null
+      ? null
+      : current - previous;
+
+
+  const improved =
+    delta === null
+      ? null
+      : higherIsBetter
+        ? delta > 0
+        : delta < 0;
+
+
+  const unchanged =
+    delta === 0;
+
+
+  const deltaClass =
+    unchanged
+      ? "neutral"
+      : improved
+        ? "positive"
+        : "negative";
+
+
+  return (
+
+    <div className="modernization-progress-card">
+
+      <span>
+
+        {label}
+
+      </span>
+
+
+      <div className="modernization-score-flow">
+
+        <strong>
+
+          {
+            previous === null
+              ? "—"
+              : previous.toFixed(1)
+          }
+
+        </strong>
+
+
+        <i>
+          →
+        </i>
+
+
+        <strong>
+
+          {
+            current === null
+              ? "—"
+              : current.toFixed(1)
+          }
+
+        </strong>
+
+      </div>
+
+
+      <small
+        className={
+          `modernization-progress-delta ${deltaClass}`
+        }
+      >
+
+        {
+          delta === null
+            ? "Score unavailable"
+            : formatDelta(
+                delta,
+                higherIsBetter
+              )
+        }
+
+      </small>
+
+    </div>
+  );
+}
+
+
 /*
  * ============================================================
  * STATUS
  * ============================================================
  */
-function StatusBadge({ status }) {
-    const cssStatus = status
-        .toLowerCase()
-        .replaceAll("_", "-");
-    return (<span className={`assessment-status assessment-status-${cssStatus}`}>
 
-      {formatStatus(status)}
+function StatusBadge({
+  status
+}) {
 
-    </span>);
+  const cssStatus =
+    status
+      .toLowerCase()
+      .replaceAll(
+        "_",
+        "-"
+      );
+
+
+  return (
+
+    <span
+      className={
+        `assessment-status assessment-status-${cssStatus}`
+      }
+    >
+
+      {
+        formatStatus(
+          status
+        )
+      }
+
+    </span>
+  );
 }
+
+
 /*
  * ============================================================
  * HELPERS
  * ============================================================
  */
-function formatStatus(status) {
-    return status
-        .replaceAll("_", " ")
-        .toLowerCase()
-        .replace(/\b\w/g, value => value.toUpperCase());
+
+function formatStatus(
+  status
+) {
+
+  return status
+    .replaceAll(
+      "_",
+      " "
+    )
+    .toLowerCase()
+    .replace(
+      /\b\w/g,
+      value =>
+        value.toUpperCase()
+    );
 }
-function formatAgentCode(value) {
-    return value
-        .replaceAll("_", " ")
-        .toLowerCase()
-        .replace(/\b\w/g, character => character.toUpperCase());
+
+
+function formatAgentCode(
+  value
+) {
+
+  return value
+    .replaceAll(
+      "_",
+      " "
+    )
+    .toLowerCase()
+    .replace(
+      /\b\w/g,
+      character =>
+        character.toUpperCase()
+    );
 }
-function formatScore(value) {
-    if (value === undefined
-        ||
-            value === null) {
-        return "—";
-    }
-    return Number(value).toFixed(1);
+
+
+function formatScore(
+  value
+) {
+
+  if (
+    value === undefined
+    ||
+    value === null
+  ) {
+
+    return "—";
+  }
+
+
+  return Number(
+    value
+  ).toFixed(1);
 }
-function formatDate(value) {
-    try {
-        return new Intl.DateTimeFormat("en-IN", {
-            dateStyle: "medium",
-            timeStyle: "short"
-        }).format(new Date(value));
-    }
-    catch {
-        return value;
-    }
+
+
+function formatDate(
+  value
+) {
+
+  try {
+
+    return new Intl.DateTimeFormat(
+      "en-IN",
+      {
+        dateStyle:
+          "medium",
+
+        timeStyle:
+          "short"
+      }
+    ).format(
+      new Date(value)
+    );
+
+  } catch {
+
+    return value;
+  }
 }
-function getErrorMessage(error, fallback) {
-    return error instanceof Error
-        ? error.message
-        : fallback;
+
+
+function toNumber(
+  value
+) {
+
+  if (
+    value === undefined
+    ||
+    value === null
+  ) {
+
+    return null;
+  }
+
+
+  const result =
+    Number(
+      value
+    );
+
+
+  return Number.isFinite(
+    result
+  )
+    ? result
+    : null;
+}
+
+
+function toTimestamp(
+  value
+) {
+
+  if (!value) {
+
+    return 0;
+  }
+
+
+  const result =
+    new Date(
+      value
+    ).getTime();
+
+
+  return Number.isFinite(
+    result
+  )
+    ? result
+    : 0;
+}
+
+
+function formatShortDate(
+  value
+) {
+
+  if (!value) {
+
+    return "—";
+  }
+
+
+  try {
+
+    return new Intl.DateTimeFormat(
+      "en-IN",
+      {
+        dateStyle:
+          "medium"
+      }
+    ).format(
+      new Date(
+        value
+      )
+    );
+
+  } catch {
+
+    return value;
+  }
+}
+
+
+function formatDelta(
+  delta,
+  higherIsBetter
+) {
+
+  if (delta === 0) {
+
+    return "No change";
+  }
+
+
+  const amount =
+    Math.abs(
+      delta
+    ).toFixed(
+      1
+    );
+
+
+  const improved =
+    higherIsBetter
+      ? delta > 0
+      : delta < 0;
+
+
+  if (improved) {
+
+    return higherIsBetter
+      ? `↑ ${amount} readiness improvement`
+      : `↓ ${amount} risk reduction`;
+  }
+
+
+  return higherIsBetter
+    ? `↓ ${amount} readiness decline`
+    : `↑ ${amount} risk increase`;
+}
+
+
+function getErrorMessage(
+  error,
+  fallback
+) {
+
+  return error instanceof Error
+    ? error.message
+    : fallback;
 }
