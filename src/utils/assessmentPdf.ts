@@ -1,318 +1,214 @@
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import type {
+    Assessment
+} from "../types";
+
+import {
+    getAccessToken
+} from "../services/apiFetch";
+
+
+const API_BASE_URL = "http://localhost:8080";
 
 
 export async function downloadAssessmentPdf(
-    elementId: string,
-    projectName: string,
-    assessmentType?: string
+    assessment: Assessment
 ): Promise<void> {
 
-    const element =
-        document.getElementById(elementId);
+    if (
+        !assessment?.id
+    ) {
 
-    if (!element) {
         throw new Error(
-            `Assessment element '${elementId}' was not found.`
+            "Assessment ID is required to generate the PDF."
         );
     }
 
 
-    /*
-     * Backward compatibility:
-     *
-     * Old calls:
-     * downloadAssessmentPdf(
-     *   "assessment-report",
-     *   "assessment-report"
-     * )
-     *
-     * New calls:
-     * downloadAssessmentPdf(
-     *   "assessment-report",
-     *   projectName,
-     *   assessment.agentCode
-     * )
-     */
-    const fileName =
-        assessmentType
-
-        ? buildAssessmentFileName(
-            projectName,
-            assessmentType
-        )
-
-        : projectName;
+    const token =
+        getAccessToken();
 
 
-    /*
-     * Add temporary export class.
-     * This lets CSS optimize the report specifically for PDF.
-     */
-    element.classList.add("pdf-export-mode");
+    if (!token) {
 
-    try {
-
-        const canvas =
-            await html2canvas(
-                element,
-                {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: "#ffffff",
-                    logging: false,
-
-                    /*
-                     * Capture complete content even when
-                     * browser viewport is smaller.
-                     */
-                    windowWidth:
-                        element.scrollWidth,
-
-                    windowHeight:
-                        element.scrollHeight
-                }
-            );
+        throw new Error(
+            "Your session has expired. Please sign in again."
+        );
+    }
 
 
-        /*
-         * A4 portrait
-         */
-        const pdf =
-            new jsPDF({
-                orientation: "portrait",
-                unit: "mm",
-                format: "a4"
-            });
+    const response =
+        await fetch(
+            `${API_BASE_URL}/api/v1/assessments/${assessment.id}/report/pdf`,
+            {
+                method:
+                    "POST",
 
+                headers: {
+                    "Authorization":
+                        `Bearer ${token}`,
 
-        const pageWidth =
-            pdf.internal.pageSize.getWidth();
+                    "Content-Type":
+                        "application/json",
 
-        const pageHeight =
-            pdf.internal.pageSize.getHeight();
+                    "Accept":
+                        "application/pdf"
+                },
 
-
-        /*
-         * PDF margins.
-         */
-        const margin = 8;
-
-        const usableWidth =
-            pageWidth - margin * 2;
-
-        const usableHeight =
-            pageHeight - margin * 2;
-
-
-        /*
-         * Scale browser screenshot to A4 width.
-         */
-        const imageWidth =
-            usableWidth;
-
-
-        /*
-         * Height represented by one PDF page.
-         */
-        const sourcePageHeight =
-            canvas.width *
-            usableHeight /
-            imageWidth;
-
-
-        let sourceY = 0;
-
-        let pageNumber = 1;
-
-
-        while (
-            sourceY < canvas.height
-        ) {
-
-            const remainingHeight =
-                canvas.height - sourceY;
-
-
-            const sliceHeight =
-                Math.min(
-                    sourcePageHeight,
-                    remainingHeight
-                );
-
-
-            /*
-             * Create one canvas for the current page.
-             */
-            const pageCanvas =
-                document.createElement(
-                    "canvas"
-                );
-
-
-            pageCanvas.width =
-                canvas.width;
-
-            pageCanvas.height =
-                sliceHeight;
-
-
-            const context =
-                pageCanvas.getContext(
-                    "2d"
-                );
-
-
-            if (!context) {
-
-                throw new Error(
-                    "Unable to create PDF rendering context."
-                );
+                body:
+                    JSON.stringify(
+                        assessment
+                    )
             }
+        );
 
 
-            context.fillStyle =
-                "#ffffff";
+    if (!response.ok) {
 
-            context.fillRect(
-                0,
-                0,
-                pageCanvas.width,
-                pageCanvas.height
-            );
+        let message =
+            `Unable to generate PDF (${response.status}).`;
 
 
-            context.drawImage(
+        try {
 
-                canvas,
-
-                0,
-                sourceY,
-                canvas.width,
-                sliceHeight,
-
-                0,
-                0,
-                canvas.width,
-                sliceHeight
-            );
-
-
-            const pageImage =
-                pageCanvas.toDataURL(
-                    "image/png",
-                    1.0
-                );
-
-
-            const renderedHeight =
-                sliceHeight *
-                imageWidth /
-                canvas.width;
+            const errorText =
+                await response.text();
 
 
             if (
-                pageNumber > 1
+                errorText
+                &&
+                errorText.trim()
             ) {
 
-                pdf.addPage();
+                message =
+                    errorText;
             }
 
-
-            pdf.addImage(
-                pageImage,
-                "PNG",
-                margin,
-                margin,
-                imageWidth,
-                renderedHeight,
-                undefined,
-                "FAST"
-            );
-
-
-            /*
-             * Footer.
-             */
-            pdf.setFontSize(8);
-
-            pdf.setTextColor(
-                120,
-                130,
-                145
-            );
-
-
-            pdf.text(
-                `MoJaX Assessment Report  |  Page ${pageNumber}`,
-                pageWidth / 2,
-                pageHeight - 3,
-                {
-                    align: "center"
-                }
-            );
-
-
-            sourceY +=
-                sliceHeight;
-
-            pageNumber++;
+        } catch {
+            // Keep fallback message.
         }
 
 
-        pdf.save(
-            normalizeFileName(
-                fileName
-            )
+        throw new Error(
+            message
         );
+    }
+
+
+    const blob =
+        await response.blob();
+
+
+    const fileName =
+        responseFileName(
+            response.headers.get(
+                "Content-Disposition"
+            )
+        )
+        || buildFallbackFileName(
+            assessment.agentCode
+        );
+
+
+    const objectUrl =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    try {
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.href =
+            objectUrl;
+
+        link.download =
+            fileName;
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        link.remove();
 
     } finally {
 
-        element.classList.remove(
-            "pdf-export-mode"
+        URL.revokeObjectURL(
+            objectUrl
         );
     }
 }
 
 
-function buildAssessmentFileName(
-    projectName: string,
-    assessmentType: string
-): string {
-    //alert(""+projectName+"-"+assessmentType);
-    const safeProjectName =
-        projectName?.trim()
-        || "Project";
+function responseFileName(
+    contentDisposition: string | null
+): string | null {
+
+    if (!contentDisposition) {
+        return null;
+    }
 
 
-    const safeAssessmentType =
-        assessmentType?.trim()
-            .replace(/_/g, "-")
-        || "Assessment";
+    const utf8 =
+        contentDisposition.match(
+            /filename\*=UTF-8''([^;]+)/i
+        );
 
 
-    return `${safeProjectName}-${safeAssessmentType}`;
+    if (utf8?.[1]) {
+
+        try {
+
+            return decodeURIComponent(
+                utf8[1]
+                    .replace(
+                        /["']/g,
+                        ""
+                    )
+                    .trim()
+            );
+
+        } catch {
+            // Fall through.
+        }
+    }
+
+
+    const regular =
+        contentDisposition.match(
+            /filename="?([^";]+)"?/i
+        );
+
+
+    return regular?.[1]?.trim()
+        || null;
 }
 
 
-function normalizeFileName(
-    fileName: string
+function buildFallbackFileName(
+    agentCode?: string
 ): string {
 
-    const safeName =
-        (fileName || "MoJaX-Assessment")
-            .trim()
-            .replace(/\s+/g, "-")
-            .replace(/[^a-zA-Z0-9-_]/g, "-")
-            .replace(/-+/g, "-")
-            .replace(/^-+|-+$/g, "");
+    const agent =
+        (
+            agentCode
+            || "Assessment"
+        )
+            .replace(
+                /_/g,
+                "-"
+            );
 
 
-    return safeName
-        .toLowerCase()
-        .endsWith(".pdf")
-
-        ? safeName
-
-        : `${safeName}.pdf`;
+    return `MoJaX-${agent}.pdf`;
 }

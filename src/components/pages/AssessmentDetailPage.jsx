@@ -16,6 +16,7 @@ export default function AssessmentDetailPage() {
     const [error, setError] = useState(null);
     const [projectError, setProjectError] = useState(null);
     const [reportSearch, setReportSearch] = useState("");
+    const [downloadError, setDownloadError] = useState(null);
     useEffect(() => {
         if (passedAssessment) {
             return;
@@ -170,7 +171,15 @@ export default function AssessmentDetailPage() {
     const resolvedProjectName = projectName.trim()
         || "Project";
     async function handleDownload() {
-        await downloadAssessmentPdf("assessment-report", resolvedProjectName, assessment.agentCode);
+        try {
+            setDownloadError(null);
+            await downloadAssessmentPdf(assessment);
+        }
+        catch (err) {
+            setDownloadError(err instanceof Error
+                ? err.message
+                : "Unable to generate assessment PDF.");
+        }
     }
     return (<div className="page">
 
@@ -183,6 +192,11 @@ export default function AssessmentDetailPage() {
       {projectError && (<div className="report-project-warning">
           Project name could not be loaded.
           The report will use a generic project name.
+        </div>)}
+
+
+      {downloadError && (<div className="report-project-warning">
+          {downloadError}
         </div>)}
 
 
