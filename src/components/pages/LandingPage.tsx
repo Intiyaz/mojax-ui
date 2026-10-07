@@ -153,10 +153,10 @@ export default function LandingPage() {
 
                             <div>
 
-                                <strong>
+                                <h2>
                                     Are your Java applications
                                     quantum-ready?
-                                </strong>
+                                </h2>
 
                                 <span>
                                     Discover RSA, ECDSA, ECDH and

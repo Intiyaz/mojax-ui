@@ -2129,19 +2129,18 @@ body {
 }
 
 
-.hero-quantum-callout strong {
+.hero-quantum-callout h2 {
     color: #db2777;
-
-    font-size: 15px;
+    font-size: 20px;
 }
 
 
 .hero-quantum-callout div span {
     margin-top: 3px;
 
-    color: #7c8098;
+    color: #000108;
 
-    font-size: 12px;
+    font-size: 25px;
     line-height: 1.5;
 }
 
