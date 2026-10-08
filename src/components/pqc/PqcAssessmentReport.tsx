@@ -29,6 +29,19 @@ type CryptoAsset = {
     migrationPriority?: string;
     evidence?: string;
     confidence?: number;
+    occurrenceCount?: number;
+    affectedFileCount?: number;
+    locations?: string[];
+};
+
+type CryptoRelationship = {
+    sourceType?: string;
+    sourceAsset?: string;
+    relationship?: string;
+    targetType?: string;
+    targetAsset?: string;
+    evidence?: string;
+    confidence?: number;
 };
 
 type PqcCbomAnalysis = PqcAnalysis & {
@@ -37,6 +50,8 @@ type PqcCbomAnalysis = PqcAnalysis & {
     hardnessAssumptionInventory?: Record<string, number>;
     quantumStatusInventory?: Record<string, number>;
     hndlExposureInventory?: Record<string, number>;
+    cryptoRelationships?: CryptoRelationship[];
+    relationshipTypeInventory?: Record<string, number>;
 };
 
 function CbomEnterpriseOverview({
@@ -50,6 +65,18 @@ function CbomEnterpriseOverview({
 
     const assets =
         cbom.cryptoBillOfMaterials ?? [];
+
+    const cryptoLibraries =
+        assets.filter(
+            asset =>
+                asset.assetType === "CRYPTO_LIBRARY"
+        );
+
+    const relationships =
+        cbom.cryptoRelationships ?? [];
+
+    const relationshipTypes =
+        cbom.relationshipTypeInventory ?? {};
 
     const assetTypes =
         cbom.assetTypeInventory ?? {};
@@ -169,6 +196,263 @@ function CbomEnterpriseOverview({
                 values={hndlStatuses}
             />
 
+            {relationships.length > 0 && (
+
+                <div
+                    style={{
+                        marginTop: "18px"
+                    }}
+                >
+                    <h3>
+                        CBOM Relationships
+                    </h3>
+
+                    <p
+                        style={{
+                            marginTop: "-4px",
+                            color: "#64748b",
+                            lineHeight: 1.5
+                        }}
+                    >
+                        Evidence-based relationships discovered between
+                        protocol, key, certificate, store, provider and
+                        cryptographic assets.
+                    </p>
+
+                    <div
+                        style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "8px",
+                            marginBottom: "12px"
+                        }}
+                    >
+                        {Object.entries(
+                            relationshipTypes
+                        ).map(
+                            ([name, count]) => (
+
+                                <span
+                                    key={name}
+                                    style={{
+                                        border: "1px solid #dbe4ee",
+                                        borderRadius: "999px",
+                                        padding: "5px 9px",
+                                        background: "#f8fafc",
+                                        fontSize: "11px"
+                                    }}
+                                >
+                                    {pretty(name)} · {count}
+                                </span>
+                            )
+                        )}
+                    </div>
+
+                    <div
+                        style={{
+                            overflowX: "auto"
+                        }}
+                    >
+                        <table
+                            style={{
+                                width: "100%",
+                                borderCollapse: "collapse"
+                            }}
+                        >
+                            <thead>
+                                <tr>
+                                    <CbomTh>Source</CbomTh>
+                                    <CbomTh>Relationship</CbomTh>
+                                    <CbomTh>Target</CbomTh>
+                                    <CbomTh>Confidence</CbomTh>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {relationships.map(
+                                    (
+                                        relation,
+                                        index
+                                    ) => (
+
+                                        <tr
+                                            key={
+                                                [
+                                                    relation.sourceAsset,
+                                                    relation.relationship,
+                                                    relation.targetAsset,
+                                                    index
+                                                ].join("-")
+                                            }
+                                        >
+                                            <CbomTd>
+                                                <strong>
+                                                    {display(
+                                                        relation.sourceAsset
+                                                    )}
+                                                </strong>
+                                                <div
+                                                    style={{
+                                                        marginTop: "3px",
+                                                        fontSize: "11px",
+                                                        color: "#64748b"
+                                                    }}
+                                                >
+                                                    {pretty(
+                                                        relation.sourceType
+                                                    )}
+                                                </div>
+                                            </CbomTd>
+
+                                            <CbomTd>
+                                                <CbomBadge
+                                                    value={
+                                                        relation.relationship
+                                                    }
+                                                />
+                                            </CbomTd>
+
+                                            <CbomTd>
+                                                <strong>
+                                                    {display(
+                                                        relation.targetAsset
+                                                    )}
+                                                </strong>
+                                                <div
+                                                    style={{
+                                                        marginTop: "3px",
+                                                        fontSize: "11px",
+                                                        color: "#64748b"
+                                                    }}
+                                                >
+                                                    {pretty(
+                                                        relation.targetType
+                                                    )}
+                                                </div>
+                                            </CbomTd>
+
+                                            <CbomTd>
+                                                {
+                                                    relation.confidence == null
+                                                        ? "—"
+                                                        : `${Math.round(
+                                                            relation.confidence * 100
+                                                        )}%`
+                                                }
+                                            </CbomTd>
+                                        </tr>
+                                    )
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+
+
+            {cryptoLibraries.length > 0 && (
+
+                <div
+                    style={{
+                        marginTop: "18px"
+                    }}
+                >
+                    <h3>
+                        Cryptographic Libraries & Services
+                    </h3>
+
+                    <p
+                        style={{
+                            marginTop: "-4px",
+                            color: "#64748b",
+                            lineHeight: 1.5
+                        }}
+                    >
+                        Build dependencies that may contribute cryptographic
+                        algorithms, providers, key management or protocol
+                        capabilities to this application.
+                    </p>
+
+                    <div
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns:
+                                "repeat(auto-fit, minmax(260px, 1fr))",
+                            gap: "10px"
+                        }}
+                    >
+                        {cryptoLibraries.map(
+                            (
+                                library,
+                                index
+                            ) => (
+
+                                <div
+                                    key={
+                                        [
+                                            library.algorithm,
+                                            library.file,
+                                            index
+                                        ].join("-")
+                                    }
+                                    style={{
+                                        border: "1px solid #e2e8f0",
+                                        borderRadius: "10px",
+                                        padding: "12px",
+                                        background: "#ffffff"
+                                    }}
+                                >
+                                    <strong>
+                                        {display(
+                                            library.algorithm
+                                        )}
+                                    </strong>
+
+                                    <div
+                                        style={{
+                                            marginTop: "6px",
+                                            fontSize: "12px",
+                                            color: "#64748b"
+                                        }}
+                                    >
+                                        Source: {display(
+                                            library.file
+                                        )}
+                                        {library.line
+                                            ? `:${library.line}`
+                                            : ""}
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            marginTop: "8px"
+                                        }}
+                                    >
+                                        <CbomBadge
+                                            value={
+                                                library.quantumStatus
+                                            }
+                                        />
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            marginTop: "8px",
+                                            fontSize: "12px"
+                                        }}
+                                    >
+                                        {display(
+                                            library.recommendedReplacement
+                                        )}
+                                    </div>
+                                </div>
+                            )
+                        )}
+                    </div>
+                </div>
+            )}
+
+
             <div
                 style={{
                     marginTop: "18px"
@@ -201,6 +485,7 @@ function CbomEnterpriseOverview({
                                 <tr>
                                     <CbomTh>Asset</CbomTh>
                                     <CbomTh>Purpose</CbomTh>
+                                    <CbomTh>Occurrences</CbomTh>
                                     <CbomTh>Location</CbomTh>
                                     <CbomTh>Hardness Assumption</CbomTh>
                                     <CbomTh>Quantum Status</CbomTh>
@@ -257,12 +542,75 @@ function CbomEnterpriseOverview({
                                                         Key size: {asset.keySize}
                                                     </div>
                                                 )}
+
+                                                {asset.keyStoreType && (
+                                                    <div
+                                                        style={{
+                                                            marginTop: "3px",
+                                                            fontSize: "11px",
+                                                            color: "#64748b"
+                                                        }}
+                                                    >
+                                                        Store: {asset.keyStoreType}
+                                                    </div>
+                                                )}
+
+                                                {asset.certificateType && (
+                                                    <div
+                                                        style={{
+                                                            marginTop: "3px",
+                                                            fontSize: "11px",
+                                                            color: "#64748b"
+                                                        }}
+                                                    >
+                                                        Certificate: {asset.certificateType}
+                                                    </div>
+                                                )}
+
+                                                {asset.protocolVersion && (
+                                                    <div
+                                                        style={{
+                                                            marginTop: "3px",
+                                                            fontSize: "11px",
+                                                            color: "#64748b"
+                                                        }}
+                                                    >
+                                                        Protocol: {asset.protocolVersion}
+                                                    </div>
+                                                )}
+
+                                                {asset.provider && (
+                                                    <div
+                                                        style={{
+                                                            marginTop: "3px",
+                                                            fontSize: "11px",
+                                                            color: "#64748b"
+                                                        }}
+                                                    >
+                                                        Provider: {asset.provider}
+                                                    </div>
+                                                )}
                                             </CbomTd>
 
                                             <CbomTd>
                                                 {pretty(
                                                     asset.purpose
                                                 )}
+                                            </CbomTd>
+
+                                            <CbomTd>
+                                                <strong>
+                                                    {asset.occurrenceCount ?? 1}
+                                                </strong>
+                                                <div
+                                                    style={{
+                                                        marginTop: "3px",
+                                                        fontSize: "11px",
+                                                        color: "#64748b"
+                                                    }}
+                                                >
+                                                    {asset.affectedFileCount ?? 1} file(s)
+                                                </div>
                                             </CbomTd>
 
                                             <CbomTd>
@@ -279,6 +627,40 @@ function CbomEnterpriseOverview({
                                                         ? `:${asset.line}`
                                                         : ""}
                                                 </div>
+
+                                                {(asset.locations?.length ?? 0) > 1 && (
+                                                    <details
+                                                        style={{
+                                                            marginTop: "5px"
+                                                        }}
+                                                    >
+                                                        <summary
+                                                            style={{
+                                                                cursor: "pointer",
+                                                                fontSize: "11px",
+                                                                color: "#475569"
+                                                            }}
+                                                        >
+                                                            View all locations
+                                                        </summary>
+
+                                                        <div
+                                                            style={{
+                                                                marginTop: "4px",
+                                                                fontSize: "11px",
+                                                                color: "#64748b"
+                                                            }}
+                                                        >
+                                                            {asset.locations?.map(
+                                                                location => (
+                                                                    <div key={location}>
+                                                                        {location}
+                                                                    </div>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    </details>
+                                                )}
                                             </CbomTd>
 
                                             <CbomTd>
