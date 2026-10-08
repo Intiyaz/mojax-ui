@@ -17,6 +17,9 @@ type CryptoAsset = {
     line?: number;
     api?: string;
     keySize?: number | null;
+    curveName?: string | null;
+    classicalStrengthStatus?: string;
+    strengthReason?: string;
     provider?: string | null;
     protocol?: string | null;
     protocolVersion?: string | null;
@@ -50,6 +53,7 @@ type PqcCbomAnalysis = PqcAnalysis & {
     hardnessAssumptionInventory?: Record<string, number>;
     quantumStatusInventory?: Record<string, number>;
     hndlExposureInventory?: Record<string, number>;
+    classicalStrengthInventory?: Record<string, number>;
     cryptoRelationships?: CryptoRelationship[];
     relationshipTypeInventory?: Record<string, number>;
 };
@@ -89,6 +93,12 @@ function CbomEnterpriseOverview({
 
     const hndlStatuses =
         cbom.hndlExposureInventory ?? {};
+
+    const strengthStatuses =
+        cbom.classicalStrengthInventory ?? {};
+
+    const weakToday =
+        strengthStatuses.WEAK_TODAY ?? 0;
 
     const quantumVulnerable =
         quantumStatuses.QUANTUM_VULNERABLE ?? 0;
@@ -136,8 +146,8 @@ function CbomEnterpriseOverview({
                     }}
                 >
                     Structured inventory of discovered cryptographic assets,
-                    quantum exposure, hardness assumptions, HNDL relevance and
-                    recommended migration direction.
+                    classical key strength, quantum exposure, hardness assumptions,
+                    HNDL relevance and recommended migration direction.
                 </p>
             </div>
 
@@ -153,6 +163,11 @@ function CbomEnterpriseOverview({
                 <CbomMetric
                     label="CBOM Assets"
                     value={assets.length}
+                />
+
+                <CbomMetric
+                    label="Weak Today"
+                    value={weakToday}
                 />
 
                 <CbomMetric
@@ -184,6 +199,11 @@ function CbomEnterpriseOverview({
             <CbomInventoryTable
                 title="Cryptographic Hardness Assumptions"
                 values={assumptions}
+            />
+
+            <CbomInventoryTable
+                title="Classical Strength"
+                values={strengthStatuses}
             />
 
             <CbomInventoryTable
@@ -487,6 +507,7 @@ function CbomEnterpriseOverview({
                                     <CbomTh>Purpose</CbomTh>
                                     <CbomTh>Occurrences</CbomTh>
                                     <CbomTh>Location</CbomTh>
+                                    <CbomTh>Classical Strength</CbomTh>
                                     <CbomTh>Hardness Assumption</CbomTh>
                                     <CbomTh>Quantum Status</CbomTh>
                                     <CbomTh>HNDL</CbomTh>
@@ -540,6 +561,18 @@ function CbomEnterpriseOverview({
                                                         }}
                                                     >
                                                         Key size: {asset.keySize}
+                                                    </div>
+                                                )}
+
+                                                {asset.curveName && (
+                                                    <div
+                                                        style={{
+                                                            marginTop: "3px",
+                                                            fontSize: "11px",
+                                                            color: "#64748b"
+                                                        }}
+                                                    >
+                                                        Curve: {asset.curveName}
                                                     </div>
                                                 )}
 
@@ -660,6 +693,28 @@ function CbomEnterpriseOverview({
                                                             )}
                                                         </div>
                                                     </details>
+                                                )}
+                                            </CbomTd>
+
+                                            <CbomTd>
+                                                <CbomBadge
+                                                    value={
+                                                        asset.classicalStrengthStatus
+                                                    }
+                                                />
+
+                                                {asset.strengthReason && (
+                                                    <div
+                                                        style={{
+                                                            marginTop: "5px",
+                                                            maxWidth: "260px",
+                                                            fontSize: "11px",
+                                                            color: "#64748b",
+                                                            lineHeight: 1.4
+                                                        }}
+                                                    >
+                                                        {asset.strengthReason}
+                                                    </div>
                                                 )}
                                             </CbomTd>
 
