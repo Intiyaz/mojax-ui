@@ -28,6 +28,14 @@ import {
   downloadAssessmentPdf
 } from "../../utils/assessmentPdf";
 
+import {
+  downloadCbom
+} from "../../utils/cbomExport";
+
+import type {
+  CbomExportFormat
+} from "../../utils/cbomExport";
+
 
 type LocationState = {
   assessment?: Assessment;
@@ -387,6 +395,32 @@ export default function AssessmentDetailPage() {
     || "Project";
 
 
+  async function handleCbomDownload(
+    format: CbomExportFormat
+  ) {
+
+    try {
+
+      setDownloadError(
+        null
+      );
+
+      await downloadCbom(
+        assessment!,
+        format
+      );
+
+    } catch (err) {
+
+      setDownloadError(
+        err instanceof Error
+          ? err.message
+          : "Unable to export CBOM."
+      );
+    }
+  }
+
+
   async function handleDownload() {
 
     try {
@@ -444,7 +478,104 @@ export default function AssessmentDetailPage() {
 
 
       <div className="assessment-toolbar">
-       
+
+        <div className="report-search-box">
+
+          <span className="report-search-icon">
+            ⌕
+          </span>
+
+          <input
+            type="search"
+            value={
+              reportSearch
+            }
+            placeholder="Search report: Hibernate, Jakarta, security, package..."
+            onChange={
+              event =>
+                setReportSearch(
+                  event.target.value
+                )
+            }
+          />
+
+          {reportSearch && (
+
+            <button
+              type="button"
+              className="report-search-clear"
+              onClick={
+                () =>
+                  setReportSearch("")
+              }
+            >
+              Clear
+            </button>
+
+          )}
+
+        </div>
+
+
+        {visibleSectionCount !== null && (
+
+          <span className="report-search-result">
+            {visibleSectionCount} matching section
+            {visibleSectionCount === 1 ? "" : "s"}
+          </span>
+
+        )}
+
+
+        {assessment.agentCode === "PQC_MIGRATION"
+          && assessment.pqcAnalysis && (
+
+          <>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={
+                () =>
+                  handleCbomDownload(
+                    "json"
+                  )
+              }
+            >
+              CBOM JSON
+            </button>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={
+                () =>
+                  handleCbomDownload(
+                    "csv"
+                  )
+              }
+            >
+              CBOM CSV
+            </button>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={
+                () =>
+                  handleCbomDownload(
+                    "cyclonedx"
+                  )
+              }
+            >
+              CycloneDX CBOM
+            </button>
+
+          </>
+
+        )}
+
+
         <button
           type="button"
           className="primary-button"
