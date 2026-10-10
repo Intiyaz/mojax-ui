@@ -8429,7 +8429,7 @@ header p {
 
     color: #7b899b;
 
-    font-size: 9px;
+    font-size: 12px;
     line-height: 1.55;
 }
 
@@ -12297,4 +12297,789 @@ header p {
     .settings-password-actions button {
         width: 100%;
     }
+}
+/* =========================================================
+   SPRING BOOT UPGRADE ASSESSMENT
+   ========================================================= */
+
+.springboot-report {
+    display: grid;
+    gap: 28px;
+    margin: 28px 0;
+}
+
+
+/* ---------------------------------------------------------
+   COMMON SECTIONS
+   --------------------------------------------------------- */
+
+.springboot-overview,
+.springboot-findings-summary,
+.springboot-roadmap {
+    overflow: hidden;
+
+    border: 1px solid #dce5df;
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 14px 36px
+        rgba(30, 70, 48, .07);
+}
+
+
+.springboot-section-heading {
+    display: grid;
+
+    grid-template-columns:
+        48px minmax(0, 1fr);
+
+    gap: 16px;
+    align-items: start;
+
+    padding: 24px 26px;
+
+    border-bottom: 1px solid #e1ebe4;
+
+    background:
+        linear-gradient(
+            120deg,
+            #f4fbf6 0%,
+            #eef8f1 50%,
+            #f7fbf8 100%
+        );
+}
+
+
+.springboot-section-number {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #247a48,
+            #42a665
+        );
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+
+.springboot-section-heading span {
+    color: #488061;
+
+    font-size: 9px;
+    font-weight: 900;
+
+    letter-spacing: 1.2px;
+}
+
+
+.springboot-section-heading h2 {
+    margin: 5px 0;
+
+    color: #203f2d;
+
+    font-size: 22px;
+}
+
+
+.springboot-section-heading p {
+    margin: 0;
+
+    color: #738278;
+
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+
+/* ---------------------------------------------------------
+   VERSION FLOW
+   --------------------------------------------------------- */
+
+.springboot-version-flow {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        minmax(0, 1fr);
+
+    gap: 18px;
+    align-items: center;
+
+    padding: 26px;
+}
+
+
+.springboot-version-card {
+    padding: 22px;
+
+    border: 1px solid #dce7df;
+    border-radius: 16px;
+
+    background: #f8fbf9;
+}
+
+
+.springboot-version-card.target {
+    border-color: #9bc9aa;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff9f2,
+            #f7fcf8
+        );
+}
+
+
+.springboot-version-card span {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #78877d;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+
+.springboot-version-card strong {
+    color: #285b3d;
+
+    font-size: 29px;
+    font-weight: 900;
+}
+
+
+.springboot-flow-arrow {
+    color: #52a36d;
+
+    font-size: 30px;
+    font-weight: 800;
+}
+
+
+/* ---------------------------------------------------------
+   RUNTIME INFORMATION
+   --------------------------------------------------------- */
+
+.springboot-runtime-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+
+    padding:
+        0 26px 26px;
+}
+
+
+.springboot-info-card {
+    padding: 16px;
+
+    border: 1px solid #e0e7e2;
+    border-radius: 12px;
+
+    background: #fafcfb;
+}
+
+
+.springboot-info-card span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #829087;
+
+    font-size: 9px;
+    font-weight: 750;
+}
+
+
+.springboot-info-card strong {
+    color: #345342;
+
+    font-size: 18px;
+}
+
+
+/* ---------------------------------------------------------
+   FINDING COUNTS
+   --------------------------------------------------------- */
+
+.springboot-risk-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 12px;
+
+    padding: 24px 26px;
+}
+
+
+.springboot-risk-card {
+    padding: 18px;
+
+    border-radius: 13px;
+
+    text-align: center;
+
+    background: #f7f9f8;
+}
+
+
+.springboot-risk-card strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 26px;
+}
+
+
+.springboot-risk-card span {
+    font-size: 9px;
+    font-weight: 850;
+
+    text-transform: uppercase;
+}
+
+
+.springboot-risk-card.critical {
+    background: #fff1f1;
+    color: #a83b3b;
+}
+
+
+.springboot-risk-card.high {
+    background: #fff4eb;
+    color: #b36127;
+}
+
+
+.springboot-risk-card.medium {
+    background: #fff9e9;
+    color: #92711c;
+}
+
+
+.springboot-risk-card.low {
+    background: #eef7ff;
+    color: #4977a4;
+}
+
+
+.springboot-risk-card.info {
+    background: #f0f5f2;
+    color: #587166;
+}
+
+
+/* ---------------------------------------------------------
+   COMPLEXITY
+   --------------------------------------------------------- */
+
+.springboot-complexity {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin:
+        0 26px 22px;
+
+    padding: 14px 17px;
+
+    border: 1px solid #e0e7e2;
+    border-radius: 11px;
+
+    background: #fafcfb;
+}
+
+
+.springboot-complexity > span {
+    color: #75847a;
+
+    font-size: 9px;
+    font-weight: 850;
+
+    letter-spacing: .7px;
+}
+
+
+.springboot-complexity > strong {
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 900;
+}
+
+
+.springboot-complexity-high {
+    background: #fff0f0;
+    color: #ac4141;
+}
+
+
+.springboot-complexity-medium {
+    background: #fff8e6;
+    color: #94701e;
+}
+
+
+.springboot-complexity-low {
+    background: #ebf8ef;
+    color: #397e51;
+}
+
+
+/* ---------------------------------------------------------
+   FINDINGS
+   --------------------------------------------------------- */
+
+.springboot-findings-list {
+    display: grid;
+    gap: 11px;
+
+    padding:
+        0 26px 26px;
+}
+
+
+.springboot-finding-card {
+    padding: 16px 17px;
+
+    border: 1px solid #e0e7e2;
+    border-radius: 12px;
+
+    background: #ffffff;
+}
+
+
+.springboot-finding-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin-bottom: 8px;
+}
+
+
+.springboot-finding-title,
+.springboot-finding-header strong {
+    color: #385346;
+
+    font-size: 11px;
+    font-weight: 850;
+}
+
+
+.springboot-finding-card p {
+    margin: 0;
+
+    color: #66766c;
+
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+
+.springboot-finding-card small {
+    display: block;
+
+    margin-top: 9px;
+
+    color: #4d765d;
+
+    line-height: 1.5;
+}
+
+
+.springboot-severity {
+    padding: 4px 7px;
+
+    border-radius: 999px;
+
+    background: #f1f4f2;
+
+    font-size: 8px;
+    font-weight: 900;
+}
+
+
+/* ---------------------------------------------------------
+   STRATEGY
+   --------------------------------------------------------- */
+
+.springboot-strategy {
+    margin: 24px 26px;
+    padding: 18px;
+
+    border-left: 4px solid #48a369;
+    border-radius: 10px;
+
+    background: #f3faf5;
+}
+
+
+.springboot-strategy span {
+    color: #44805a;
+
+    font-size: 9px;
+    font-weight: 900;
+
+    letter-spacing: .8px;
+}
+
+
+.springboot-strategy p {
+    margin:
+        8px 0 0;
+
+    color: #5f7466;
+
+    font-size: 10px;
+    line-height: 1.65;
+}
+
+
+/* ---------------------------------------------------------
+   UPGRADE ROADMAP
+   --------------------------------------------------------- */
+
+.springboot-roadmap-list {
+    display: grid;
+    gap: 12px;
+
+    padding:
+        0 26px 27px;
+}
+
+
+.springboot-roadmap-item {
+    display: grid;
+
+    grid-template-columns:
+        42px minmax(0, 1fr);
+
+    gap: 14px;
+}
+
+
+.springboot-roadmap-order {
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #318354,
+            #55ad72
+        );
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.springboot-roadmap-content {
+    padding: 15px 17px;
+
+    border: 1px solid #dfe7e1;
+    border-radius: 12px;
+
+    background: #fbfcfb;
+}
+
+
+.springboot-roadmap-header {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.springboot-roadmap-header span {
+    color: #5e8b6d;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: .7px;
+}
+
+
+.springboot-roadmap-header h3 {
+    margin: 4px 0;
+
+    color: #304b39;
+
+    font-size: 13px;
+}
+
+
+.springboot-roadmap-tags {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 5px;
+}
+
+
+.springboot-roadmap-tags span {
+    padding: 4px 7px;
+
+    border-radius: 999px;
+
+    background: #eef5f0;
+
+    color: #587161;
+
+    white-space: nowrap;
+}
+
+
+.springboot-roadmap-content p {
+    margin:
+        7px 0 0;
+
+    color: #69786e;
+
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    .springboot-runtime-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .springboot-risk-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .springboot-version-flow {
+        grid-template-columns: 1fr;
+    }
+
+    .springboot-flow-arrow {
+        transform: rotate(90deg);
+        text-align: center;
+    }
+
+    .springboot-runtime-grid,
+    .springboot-risk-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .springboot-roadmap-header {
+        flex-direction: column;
+    }
+
+}
+
+
+/* =========================================================
+   COLORFUL AGENT CARDS
+   ========================================================= */
+
+.agent-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.agent-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 5px;
+    border-radius: 13px 13px 0 0;
+}
+
+.agent-card-java::before {
+    background: linear-gradient(90deg, #f28c38, #d6522c);
+}
+
+.agent-card-spring::before {
+    background: linear-gradient(90deg, #43b45f, #1f8e47);
+}
+
+.agent-card-quantum::before {
+    background: linear-gradient(90deg, #6f63ff, #2aa3ff);
+}
+
+.agent-card-jee::before {
+    background: linear-gradient(90deg, #4d8bff, #6d5efc);
+}
+
+.agent-card-default::before {
+    background: linear-gradient(90deg, #7a8aa0, #5d6d83);
+}
+
+
+/* ---------------------------------------------------------
+   ENHANCED ICON AREA
+   --------------------------------------------------------- */
+
+.agent-icon-rich {
+    width: 58px;
+    height: 58px;
+
+    flex: 0 0 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+    padding: 6px;
+}
+
+.agent-card-java .agent-icon-rich {
+    background: linear-gradient(135deg, #fff1e8, #ffe2cf);
+    box-shadow: inset 0 0 0 1px #ffd3bb;
+}
+
+.agent-card-spring .agent-icon-rich {
+    background: linear-gradient(135deg, #edfbea, #dff6e2);
+    box-shadow: inset 0 0 0 1px #c9ebcf;
+}
+
+.agent-card-quantum .agent-icon-rich {
+    background: linear-gradient(135deg, #eef0ff, #e1efff);
+    box-shadow: inset 0 0 0 1px #d0dafc;
+}
+
+.agent-card-jee .agent-icon-rich,
+.agent-card-default .agent-icon-rich {
+    background: linear-gradient(135deg, #eef3ff, #f1ebff);
+    box-shadow: inset 0 0 0 1px #dde4f3;
+}
+
+.agent-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
+}
+
+.agent-icon-glyph {
+    line-height: 1;
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.agent-icon-label {
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.agent-card-java .agent-icon-label {
+    color: #c55a22;
+}
+
+.agent-card-spring .agent-icon-label {
+    color: #2b8743;
+}
+
+.agent-card-quantum .agent-icon-label {
+    color: #4d59c5;
+}
+
+.agent-card-jee .agent-icon-label,
+.agent-card-default .agent-icon-label {
+    color: #5c6a89;
+}
+
+
+/* ---------------------------------------------------------
+   CARD BODY ENHANCEMENTS
+   --------------------------------------------------------- */
+
+.agent-card-java {
+    background:
+        linear-gradient(
+            180deg,
+            #fffaf7 0%,
+            #ffffff 38%
+        );
+}
+
+.agent-card-spring {
+    background:
+        linear-gradient(
+            180deg,
+            #f9fef9 0%,
+            #ffffff 38%
+        );
+}
+
+.agent-card-quantum {
+    background:
+        linear-gradient(
+            180deg,
+            #fafaff 0%,
+            #ffffff 38%
+        );
+}
+
+.agent-card-java:hover {
+    border-color: #f0bf9a;
+}
+
+.agent-card-spring:hover {
+    border-color: #a9dbb3;
+}
+
+.agent-card-quantum:hover {
+    border-color: #b6c1ff;
 }

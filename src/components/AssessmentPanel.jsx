@@ -1,62 +1,180 @@
 import { formatName } from "../utils/formatters";
+
 import Score from "./Score";
 import AssessmentSummaryTable from "./AssessmentSummaryTable";
 import MetricsPanel from "./MetricsPanel";
 import RecommendationsPanel from "./RecommendationsPanel";
 import ExecutiveSummary from "./ExecutiveSummary";
 import AssessmentMetadata from "./AssessmentMetadata";
+
 import PqcAssessmentReport from "./pqc/PqcAssessmentReport";
-import JavaModernizationReport from "./modernization/JavaModernizationReport";
-import JavaMigrationPlannerReport from "./migration/JavaMigrationPlannerReport";
+
+import JavaModernizationReport
+    from "./modernization/JavaModernizationReport";
+
+import JavaMigrationPlannerReport
+    from "./migration/JavaMigrationPlannerReport";
+
+import SpringBootAssessmentReport
+    from "./springboot/SpringBootAssessmentReport";
+
+
 function StatusBadge({ status }) {
-    return (<span className={status === "COMPLETED"
-            ? "completed"
-            : "assessment-status"}>
+
+    return (
+        <span
+            className={
+                status === "COMPLETED"
+                    ? "completed"
+                    : "assessment-status"
+            }
+        >
             {status}
-        </span>);
+        </span>
+    );
 }
-export default function AssessmentPanel({ assessment, projectName }) {
-    const isJavaMigration = assessment.agentCode ===
+
+
+export default function AssessmentPanel({
+    assessment,
+    projectName
+}) {
+
+    /*
+     * =========================================================
+     * AGENT TYPES
+     * =========================================================
+     */
+
+    const isJavaMigration =
+        assessment.agentCode ===
         "JAVA_MIGRATION";
-    const isPqcMigration = assessment.agentCode ===
+
+
+    const isPqcMigration =
+        assessment.agentCode ===
         "PQC_MIGRATION";
-    const metrics = assessment.metrics || {};
-    const currentJava = scalar(
-        metrics.currentJavaVersion,
-        summaryValue(
-            assessment.summary,
-            "Current Java Version",
-            "?"
-        )
-    );
-    const targetJava = scalar(
-        metrics.targetJavaVersion,
-        summaryValue(
-            assessment.summary,
-            "Target Java Version",
-            "21"
-        )
-    );
-    return (<section id="assessment-report-content" className="assessment-report">
+
+
+    const isSpringBootUpgrade =
+        assessment.agentCode ===
+        "SPRING_BOOT_UPGRADE";
+
+
+    /*
+     * =========================================================
+     * METRICS
+     * =========================================================
+     */
+
+    const metrics =
+        assessment.metrics || {};
+
+
+    /*
+     * Java Migration versions
+     */
+
+    const currentJava =
+        scalar(
+            metrics.currentJavaVersion,
+            summaryValue(
+                assessment.summary,
+                "Current Java Version",
+                "?"
+            )
+        );
+
+
+    const targetJava =
+        scalar(
+            metrics.targetJavaVersion,
+            summaryValue(
+                assessment.summary,
+                "Target Java Version",
+                "21"
+            )
+        );
+
+
+    /*
+     * =========================================================
+     * SCORE LABELS
+     * =========================================================
+     */
+
+    const readinessTitle =
+        isPqcMigration
+            ? "PQC Readiness"
+            : isSpringBootUpgrade
+                ? "Spring Boot Readiness"
+                : "Java 21 Readiness";
+
+
+    const riskTitle =
+        isPqcMigration
+            ? "Quantum Migration Risk"
+            : isSpringBootUpgrade
+                ? "Spring Boot Migration Risk"
+                : "Migration Risk";
+
+
+    /*
+     * =========================================================
+     * ASSESSMENT TITLE
+     * =========================================================
+     */
+
+    const assessmentTitle =
+        isPqcMigration
+            ? "Post-Quantum Cryptography Assessment"
+            : isSpringBootUpgrade
+                ? "Spring Boot Upgrade Assessment"
+                : formatName(
+                    assessment.agentCode
+                );
+
+
+    return (
+
+        <section
+            id="assessment-report-content"
+            className="assessment-report"
+        >
+
             <section className="assessment">
 
-                {isJavaMigration && (<section className="migration-cover" data-report-search>
+
+                {/* =====================================================
+                    JAVA MIGRATION COVER
+                   ===================================================== */}
+
+                {isJavaMigration && (
+
+                    <section
+                        className="migration-cover"
+                        data-report-search
+                    >
 
                         <div className="migration-cover-brand">
                             MoJaX
                         </div>
 
+
                         <div className="migration-cover-kicker">
                             ENTERPRISE JAVA MODERNIZATION INTELLIGENCE
                         </div>
+
 
                         <h1>
                             Java {currentJava} → Java {targetJava}
                         </h1>
 
+
                         <h2>
                             Migration & Modernization Assessment
                         </h2>
+
 
                         <div className="migration-cover-project">
 
@@ -65,21 +183,30 @@ export default function AssessmentPanel({ assessment, projectName }) {
                             </span>
 
                             <strong>
-                                {projectName
-                || "Project"}
+                                {
+                                    projectName
+                                    || "Project"
+                                }
                             </strong>
 
                         </div>
 
+
                         <p>
                             Java 21 readiness, framework compatibility,
                             modernization opportunities, package-level
-                            migration findings and an ordered migration roadmap.
+                            migration findings and an ordered migration
+                            roadmap.
                         </p>
+
 
                         <div className="migration-cover-footer">
 
-                            <StatusBadge status={assessment.status}/>
+                            <StatusBadge
+                                status={
+                                    assessment.status
+                                }
+                            />
 
                             <span>
                                 Assessment ID · {assessment.id}
@@ -87,10 +214,18 @@ export default function AssessmentPanel({ assessment, projectName }) {
 
                         </div>
 
-                    </section>)}
+                    </section>
+
+                )}
 
 
-                {!isJavaMigration && (<div className="assessment-header">
+                {/* =====================================================
+                    NON-JAVA ASSESSMENT HEADER
+                   ===================================================== */}
+
+                {!isJavaMigration && (
+
+                    <div className="assessment-header">
 
                         <div>
 
@@ -98,55 +233,120 @@ export default function AssessmentPanel({ assessment, projectName }) {
                                 ASSESSMENT RESULT
                             </span>
 
+
                             <h2>
-                                {isPqcMigration
-                ? "Post-Quantum Cryptography Assessment"
-                : formatName(assessment.agentCode)}
+                                {assessmentTitle}
                             </h2>
 
                         </div>
 
-                        <StatusBadge status={assessment.status}/>
 
-                    </div>)}
+                        <StatusBadge
+                            status={
+                                assessment.status
+                            }
+                        />
+
+                    </div>
+
+                )}
 
 
-                <section className="report-executive-summary" data-report-search>
+                {/* =====================================================
+                    EXECUTIVE SUMMARY
+                   ===================================================== */}
 
-                    <ExecutiveSummary summary={assessment.summary}/>
+                <section
+                    className="report-executive-summary"
+                    data-report-search
+                >
+
+                    <ExecutiveSummary
+                        summary={
+                            assessment.summary
+                        }
+                    />
 
                 </section>
 
 
+                {/* =====================================================
+                    SCORES
+                   ===================================================== */}
+
                 <div className="scores">
 
-                    <Score title={isPqcMigration
-            ? "PQC Readiness"
-            : "Java 21 Readiness"} score={assessment.readinessScore}/>
+                    <Score
+                        title={
+                            readinessTitle
+                        }
+                        score={
+                            assessment.readinessScore
+                        }
+                    />
 
-                    <Score title={isPqcMigration
-            ? "Quantum Migration Risk"
-            : "Migration Risk"} score={assessment.riskScore}/>
+
+                    <Score
+                        title={
+                            riskTitle
+                        }
+                        score={
+                            assessment.riskScore
+                        }
+                    />
 
                 </div>
 
 
-                {isJavaMigration && (<section data-report-search>
+                {/* =====================================================
+                    JAVA MIGRATION SUMMARY
+                   ===================================================== */}
 
-                        <AssessmentSummaryTable assessment={assessment}/>
+                {isJavaMigration && (
 
-                    </section>)}
+                    <section data-report-search>
 
+                        <AssessmentSummaryTable
+                            assessment={
+                                assessment
+                            }
+                        />
+
+                    </section>
+
+                )}
+
+
+                {/* =====================================================
+                    JAVA MODERNIZATION ANALYSIS
+                   ===================================================== */}
 
                 {isJavaMigration &&
-            assessment.modernizationAnalysis && (<section data-report-search>
+                    assessment.modernizationAnalysis && (
 
-                        <JavaModernizationReport analysis={assessment.modernizationAnalysis}/>
+                    <section data-report-search>
 
-                    </section>)}
+                        <JavaModernizationReport
+                            analysis={
+                                assessment.modernizationAnalysis
+                            }
+                        />
+
+                    </section>
+
+                )}
 
 
-                {isJavaMigration && (<section className="consolidated-report-stage" data-report-search>
+                {/* =====================================================
+                    JAVA MIGRATION ROADMAP
+                   ===================================================== */}
+
+                {isJavaMigration && (
+
+                    <section
+                        className="consolidated-report-stage"
+                        data-report-search
+                    >
 
                         <div className="consolidated-stage-label">
 
@@ -169,43 +369,127 @@ export default function AssessmentPanel({ assessment, projectName }) {
                         </div>
 
 
-                        <JavaMigrationPlannerReport metrics={assessment.metrics}/>
+                        <JavaMigrationPlannerReport
+                            metrics={
+                                assessment.metrics
+                            }
+                        />
 
 
-                        <RecommendationsPanel recommendations={assessment.recommendations}/>
+                        <RecommendationsPanel
+                            recommendations={
+                                assessment.recommendations
+                            }
+                        />
 
-                    </section>)}
+                    </section>
+
+                )}
 
 
-                {isJavaMigration && (<section data-report-search>
+                {/* =====================================================
+                    JAVA METRICS
+                   ===================================================== */}
 
-                        <MetricsPanel metrics={assessment.metrics}/>
+                {isJavaMigration && (
 
-                    </section>)}
+                    <section data-report-search>
 
+                        <MetricsPanel
+                            metrics={
+                                assessment.metrics
+                            }
+                        />
+
+                    </section>
+
+                )}
+
+
+                {/* =====================================================
+                    PQC REPORT
+                   ===================================================== */}
 
                 {isPqcMigration &&
-            assessment.pqcAnalysis && (<section data-report-search>
+                    assessment.pqcAnalysis && (
 
-                        <PqcAssessmentReport analysis={assessment.pqcAnalysis}/>
+                    <section data-report-search>
 
-                    </section>)}
+                        <PqcAssessmentReport
+                            analysis={
+                                assessment.pqcAnalysis
+                            }
+                        />
+
+                    </section>
+
+                )}
 
 
-                {!isJavaMigration && (<section data-report-search>
+                {/* =====================================================
+                    SPRING BOOT REPORT
+                   ===================================================== */}
 
-                        <RecommendationsPanel recommendations={assessment.recommendations}/>
+                {isSpringBootUpgrade && (
 
-                    </section>)}
+                    <section data-report-search>
+
+                        <SpringBootAssessmentReport
+
+                            metrics={
+                                assessment.metrics
+                                || {}
+                            }
+
+                            findings={
+                                assessment.findings
+                                || []
+                            }
+
+                        />
+
+                    </section>
+
+                )}
 
 
-                <section className="assessment-details-stage" data-report-search>
+                {/* =====================================================
+                    NON-JAVA RECOMMENDATIONS
+                   ===================================================== */}
 
-                    <div className="consolidated-stage-label compact">
+                {!isJavaMigration && (
+
+                    <section data-report-search>
+
+                        <RecommendationsPanel
+                            recommendations={
+                                assessment.recommendations
+                            }
+                        />
+
+                    </section>
+
+                )}
+
+
+                {/* =====================================================
+                    ASSESSMENT DETAILS
+                   ===================================================== */}
+
+                <section
+                    className="assessment-details-stage"
+                    data-report-search
+                >
+
+                    <div
+                        className=
+                            "consolidated-stage-label compact"
+                    >
 
                         <span>
                             05
                         </span>
+
 
                         <div>
 
@@ -221,31 +505,50 @@ export default function AssessmentPanel({ assessment, projectName }) {
 
                     </div>
 
-                    <AssessmentMetadata assessment={assessment}/>
+
+                    <AssessmentMetadata
+                        assessment={
+                            assessment
+                        }
+                    />
 
                 </section>
 
             </section>
-        </section>);
+
+        </section>
+    );
 }
+
+
+/*
+ * =========================================================
+ * SUMMARY VALUE
+ * =========================================================
+ */
+
 function summaryValue(
     summary,
     label,
     fallback
 ) {
+
     if (
         summary == null
         ||
         summary.trim().length === 0
     ) {
+
         return fallback;
     }
+
 
     const escapedLabel =
         label.replace(
             /[.*+?^${}()|[\]\\]/g,
             "\\$&"
         );
+
 
     const match =
         summary.match(
@@ -255,15 +558,34 @@ function summaryValue(
             )
         );
 
+
     return match?.[1]?.trim()
         || fallback;
 }
 
-function scalar(value, fallback) {
-    if (typeof value === "string"
+
+/*
+ * =========================================================
+ * SCALAR VALUE
+ * =========================================================
+ */
+
+function scalar(
+    value,
+    fallback
+) {
+
+    if (
+        typeof value === "string"
         ||
-            typeof value === "number") {
-        return String(value);
+        typeof value === "number"
+    ) {
+
+        return String(
+            value
+        );
     }
+
+
     return fallback;
 }

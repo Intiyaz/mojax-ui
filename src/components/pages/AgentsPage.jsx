@@ -1,340 +1,1283 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getAgents } from "../../services/agentApi";
-import { getProjects } from "../../services/projectApi";
-import { runAssessment } from "../../services/assessmentApi";
+import {
+    useEffect,
+    useMemo,
+    useState
+} from "react";
+
+import {
+    useNavigate
+} from "react-router-dom";
+
+import {
+    getAgents
+} from "../../services/agentApi";
+
+import {
+    getProjects
+} from "../../services/projectApi";
+
+import {
+    runAssessment
+} from "../../services/assessmentApi";
+
+
 export default function AgentsPage() {
-    const navigate = useNavigate();
-    const [agents, setAgents] = useState([]);
-    const [projects, setProjects] = useState([]);
-    const [selectedProjectId, setSelectedProjectId] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [runningAgentCode, setRunningAgentCode] = useState(null);
-    const [error, setError] = useState(null);
-    useEffect(() => {
-        loadPage();
-    }, []);
+
+    const navigate =
+        useNavigate();
+
+
+    const [
+        agents,
+        setAgents
+    ] =
+        useState([]);
+
+
+    const [
+        projects,
+        setProjects
+    ] =
+        useState([]);
+
+
+    const [
+        selectedProjectId,
+        setSelectedProjectId
+    ] =
+        useState("");
+
+
+    const [
+        loading,
+        setLoading
+    ] =
+        useState(true);
+
+
+    const [
+        runningAgentCode,
+        setRunningAgentCode
+    ] =
+        useState(null);
+
+
+    const [
+        error,
+        setError
+    ] =
+        useState(null);
+
+
+    /*
+     * =========================================================
+     * INITIAL LOAD
+     * =========================================================
+     */
+
+    useEffect(
+        () => {
+
+            loadPage();
+
+        },
+        []
+    );
+
+
+    /*
+     * =========================================================
+     * LOAD AGENTS + PROJECTS
+     * =========================================================
+     */
+
     async function loadPage() {
+
         try {
-            setLoading(true);
-            setError(null);
-            const [agentData, projectData] = await Promise.all([
-                getAgents(),
-                getProjects()
-            ]);
-            setAgents(Array.isArray(agentData)
-                ? agentData
-                : []);
-            setProjects(Array.isArray(projectData)
-                ? projectData
-                : []);
-            if (projectData.length > 0) {
-                setSelectedProjectId(current => current
-                    ||
-                        projectData[0].id);
+
+            setLoading(
+                true
+            );
+
+
+            setError(
+                null
+            );
+
+
+            const [
+                agentData,
+                projectData
+            ] =
+                await Promise.all([
+                    getAgents(),
+                    getProjects()
+                ]);
+
+
+            setAgents(
+                Array.isArray(
+                    agentData
+                )
+                    ? agentData
+                    : []
+            );
+
+
+            setProjects(
+                Array.isArray(
+                    projectData
+                )
+                    ? projectData
+                    : []
+            );
+
+
+            if (
+                Array.isArray(projectData)
+                &&
+                projectData.length > 0
+            ) {
+
+                setSelectedProjectId(
+                    current =>
+                        current
+                        ||
+                        projectData[0].id
+                );
             }
-        }
-        catch (err) {
-            setError(getErrorMessage(err, "Unable to load agents."));
-        }
-        finally {
-            setLoading(false);
+
+        } catch (err) {
+
+            setError(
+                getErrorMessage(
+                    err,
+                    "Unable to load agents."
+                )
+            );
+
+        } finally {
+
+            setLoading(
+                false
+            );
         }
     }
-    const selectedProject = useMemo(() => projects.find(project => project.id
-        === selectedProjectId), [
-        projects,
-        selectedProjectId
-    ]);
-    async function handleRunAgent(agentCode) {
+
+
+    /*
+     * =========================================================
+     * SELECTED PROJECT
+     * =========================================================
+     */
+
+    const selectedProject =
+        useMemo(
+            () =>
+                projects.find(
+                    project =>
+                        project.id
+                        === selectedProjectId
+                ),
+            [
+                projects,
+                selectedProjectId
+            ]
+        );
+
+
+    /*
+     * =========================================================
+     * RUN AGENT
+     * =========================================================
+     */
+
+    async function handleRunAgent(
+        agentCode
+    ) {
+
         if (!selectedProjectId) {
-            setError("Please select a project before running an assessment.");
+
+            setError(
+                "Please select a project before running an assessment."
+            );
+
             return;
         }
+
+
         try {
-            setRunningAgentCode(agentCode);
-            setError(null);
-            const assessment = await runAssessment(selectedProjectId, agentCode);
-            navigate(`/assessments/${assessment.id}`, {
-                state: {
-                    assessment
+
+            setRunningAgentCode(
+                agentCode
+            );
+
+
+            setError(
+                null
+            );
+
+
+            const assessment =
+                await runAssessment(
+                    selectedProjectId,
+                    agentCode
+                );
+
+
+            navigate(
+                `/assessments/${assessment.id}`,
+                {
+                    state: {
+                        assessment
+                    }
                 }
-            });
-        }
-        catch (err) {
-            setError(getErrorMessage(err, "Unable to run assessment."));
-        }
-        finally {
-            setRunningAgentCode(null);
+            );
+
+        } catch (err) {
+
+            setError(
+                getErrorMessage(
+                    err,
+                    "Unable to run assessment."
+                )
+            );
+
+        } finally {
+
+            setRunningAgentCode(
+                null
+            );
         }
     }
-    return (<div className="page-content">
 
 
-      {/* HEADER */}
+    /*
+     * =========================================================
+     * UI
+     * =========================================================
+     */
 
-      <div className="page-header">
+    return (
 
-        <div>
+        <div className="page-content">
 
-          <span className="page-kicker">
 
-            MODERNIZATION INTELLIGENCE
+            {/* =================================================
+                PAGE HEADER
+               ================================================= */}
 
-          </span>
+            <div className="page-header">
 
+                <div>
 
-          <h1>
+                    <span className="page-kicker">
+                        MODERNIZATION INTELLIGENCE
+                    </span>
 
-            Assessment Agents
 
-          </h1>
+                    <h1>
+                        Assessment Agents
+                    </h1>
 
 
-          <p>
+                    <p>
+                        Select a project and run a
+                        specialized MoJaX assessment.
+                    </p>
 
-            Select a project and run a
-            specialized MoJaX assessment.
+                </div>
 
-          </p>
+            </div>
 
-        </div>
 
-      </div>
+            {/* =================================================
+                ERROR
+               ================================================= */}
 
+            {
+                error
+                &&
+                (
 
-      {/* ERROR */}
+                    <div className="page-error">
 
-      {error
-            &&
-                (<div className="page-error">
+                        {error}
 
-            {error}
+                    </div>
 
-          </div>)}
+                )
+            }
 
 
-      {/* PROJECT SELECTOR */}
+            {/* =================================================
+                PROJECT SELECTOR
+               ================================================= */}
 
-      <div className="agent-project-selector">
+            <div className="agent-project-selector">
 
-        <div>
+                <div>
 
-          <span className="selector-label">
+                    <span className="selector-label">
+                        PROJECT TO ASSESS
+                    </span>
 
-            PROJECT TO ASSESS
 
-          </span>
+                    <h3>
+                        Select Project
+                    </h3>
 
+                </div>
 
-          <h3>
 
-            Select Project
+                {
+                    projects.length > 0
+                        ?
+                        (
 
-          </h3>
-
-        </div>
-
-
-        {projects.length > 0
-            ?
-                (<select value={selectedProjectId} disabled={runningAgentCode !== null} onChange={event => setSelectedProjectId(event.target.value)}>
-
-              {projects.map(project => (<option key={project.id} value={project.id}>
-
-                      {project.name}
-
-                    </option>))}
-
-            </select>)
-            :
-                (<div className="selector-empty">
-
-              No projects available.
-
-            </div>)}
-
-      </div>
-
-
-      {selectedProject
-            &&
-                (<div className="selected-project-summary">
-
-            Running assessments against:
-            {" "}
-
-            <strong>
-
-              {selectedProject.name}
-
-            </strong>
-
-          </div>)}
-
-
-      {/* LOADING */}
-
-      {loading
-            &&
-                (<div className="page-loading">
-
-            Loading MoJaX agents...
-
-          </div>)}
-
-
-      {/* AGENTS */}
-
-      {!loading
-            &&
-                (<div className="agents-grid">
-
-            {agents.map(agent => {
-                        const running = runningAgentCode
-                            === agent.code;
-                        return (<div key={agent.code} className="agent-card">
-
-                      <div className="agent-card-header">
-
-                        <div className="agent-icon">
-
-                          {getAgentIcon(agent.code)}
-
-                        </div>
-
-
-                        <div>
-
-                          <span className="agent-code">
-
-                            {agent.code}
-
-                          </span>
-
-
-                          <h3>
-
-                            {agent.name}
-
-                          </h3>
-
-                        </div>
-
-                      </div>
-
-
-                      <p className="agent-description">
-
-                        {agent.description
-                                ||
-                                    getDefaultDescription(agent.code)}
-
-                      </p>
-
-
-                      {agent.category
-                                &&
-                                    (<div className="agent-category">
-
-                            {agent.category}
-
-                          </div>)}
-
-
-                      <button type="button" className="agent-run-button" disabled={!selectedProjectId
-                                ||
+                            <select
+                                value={
+                                    selectedProjectId
+                                }
+                                disabled={
                                     runningAgentCode !== null
-                                ||
-                                    agent.enabled === false} onClick={() => handleRunAgent(agent.code)}>
+                                }
+                                onChange={
+                                    event =>
+                                        setSelectedProjectId(
+                                            event.target.value
+                                        )
+                                }
+                            >
 
-                        {running
-                                ?
-                                    "Running Assessment..."
-                                :
-                                    "Run Assessment"}
+                                {
+                                    projects.map(
+                                        project => (
 
-                        {!running
-                                &&
-                                    <span>→</span>}
+                                            <option
+                                                key={
+                                                    project.id
+                                                }
+                                                value={
+                                                    project.id
+                                                }
+                                            >
+                                                {
+                                                    project.name
+                                                }
+                                            </option>
 
-                      </button>
+                                        )
+                                    )
+                                }
 
-                    </div>);
-                    })}
+                            </select>
 
-          </div>)}
+                        )
+                        :
+                        (
+
+                            <div className="selector-empty">
+                                No projects available.
+                            </div>
+
+                        )
+                }
+
+            </div>
 
 
-      {!loading
-            &&
+            {/* =================================================
+                SELECTED PROJECT
+               ================================================= */}
+
+            {
+                selectedProject
+                &&
+                (
+
+                    <div className="selected-project-summary">
+
+                        Running assessments against:{" "}
+
+                        <strong>
+                            {
+                                selectedProject.name
+                            }
+                        </strong>
+
+                    </div>
+
+                )
+            }
+
+
+            {/* =================================================
+                LOADING
+               ================================================= */}
+
+            {
+                loading
+                &&
+                (
+
+                    <div className="page-loading">
+
+                        Loading MoJaX agents...
+
+                    </div>
+
+                )
+            }
+
+
+            {/* =================================================
+                AGENT CARDS
+               ================================================= */}
+
+            {
+                !loading
+                &&
+                (
+
+                    <div className="agents-grid">
+
+                        {
+                            agents.map(
+                                agent => {
+
+                                    const running =
+                                        runningAgentCode
+                                        === agent.code;
+
+
+                                    return (
+
+                                        <div
+                                            key={
+                                                agent.code
+                                            }
+                                            className={
+                                                `agent-card ${getAgentCardClass(
+                                                    agent.code
+                                                )}`
+                                            }
+                                        >
+
+                                            {/* CARD HEADER */}
+
+                                            <div className="agent-card-header">
+
+                                                <div
+                                                    className=
+                                                        "agent-icon agent-icon-rich"
+                                                >
+
+                                                    {
+                                                        getAgentVisual(
+                                                            agent.code
+                                                        )
+                                                    }
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <span className="agent-code">
+
+                                                        {
+                                                            getAgentCodeLabel(
+                                                                agent.code
+                                                            )
+                                                        }
+
+                                                    </span>
+
+
+                                                    <h3>
+
+                                                        {
+                                                            agent.name
+                                                            ||
+                                                            getAgentName(
+                                                                agent.code
+                                                            )
+                                                        }
+
+                                                    </h3>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            {/* DESCRIPTION */}
+
+                                            <p className="agent-description">
+
+                                                {
+                                                    agent.description
+                                                    ||
+                                                    getDefaultDescription(
+                                                        agent.code
+                                                    )
+                                                }
+
+                                            </p>
+
+
+                                            {/* CATEGORY */}
+
+                                            {
+                                                agent.category
+                                                &&
+                                                (
+
+                                                    <div className="agent-category">
+
+                                                        {
+                                                            agent.category
+                                                        }
+
+                                                    </div>
+
+                                                )
+                                            }
+
+
+                                           
+
+
+                                            {/* RUN BUTTON */}
+
+                                            <button
+                                                type="button"
+                                                className="agent-run-button"
+                                                disabled={
+                                                    !selectedProjectId
+                                                    ||
+                                                    runningAgentCode !== null
+                                                    ||
+                                                    agent.enabled === false
+                                                }
+                                                onClick={
+                                                    () =>
+                                                        handleRunAgent(
+                                                            agent.code
+                                                        )
+                                                }
+                                            >
+
+                                                {
+                                                    running
+                                                        ?
+                                                        "Running Assessment..."
+                                                        :
+                                                        "Run Assessment"
+                                                }
+
+
+                                                {
+                                                    !running
+                                                    &&
+                                                    <span>
+                                                        →
+                                                    </span>
+                                                }
+
+                                            </button>
+
+                                        </div>
+
+                                    );
+                                }
+                            )
+                        }
+
+                    </div>
+
+                )
+            }
+
+
+            {/* =================================================
+                EMPTY STATE
+               ================================================= */}
+
+            {
+                !loading
+                &&
                 agents.length === 0
-            &&
-                (<div className="empty-state">
+                &&
+                (
 
-            <h3>
+                    <div className="empty-state">
 
-              No agents available
+                        <h3>
+                            No agents available
+                        </h3>
 
-            </h3>
 
+                        <p>
+                            No active MoJaX assessment
+                            agents were returned by the server.
+                        </p>
 
-            <p>
+                    </div>
 
-              No active MoJaX assessment
-              agents were returned by the server.
+                )
+            }
 
-            </p>
-
-          </div>)}
-
-    </div>);
+        </div>
+    );
 }
-function getAgentIcon(code) {
+
+
+/*
+ * =========================================================
+ * AGENT CARD STYLE
+ * =========================================================
+ */
+
+function getAgentCardClass(
+    code
+) {
+
     switch (code) {
+
         case "JAVA_MIGRATION":
-            return "J";
-        case "JEE_SPRING":
-            return "S";
-        case "MONOLITH_MICROSERVICES":
-            return "M";
-        case "XML_JSON":
-            return "X";
+
+            return "agent-card-java";
+
+
+        case "SPRING_BOOT_UPGRADE":
+
+            return "agent-card-spring";
+
+
         case "PQC_MIGRATION":
-            return "Q";
+
+            return "agent-card-quantum";
+
+
+        case "JEE_SPRING":
+
+            return "agent-card-jee";
+
+
+        case "MONOLITH_MICROSERVICES":
+
+            return "agent-card-microservices";
+
+
+        case "XML_JSON":
+
+            return "agent-card-xml";
+
+
         case "SONAR_INTELLIGENCE":
-            return "◎";
+
+            return "agent-card-sonar";
+
+
         case "JVM_DIAGNOSTICS":
-            return "V";
+
+            return "agent-card-jvm";
+
+
         case "OWASP_SECURITY":
-            return "◆";
+
+            return "agent-card-security";
+
+
         default:
-            return "A";
+
+            return "agent-card-default";
     }
 }
-function getDefaultDescription(code) {
+
+
+/*
+ * =========================================================
+ * AGENT VISUAL / LOGO
+ * =========================================================
+ */
+
+function getAgentVisual(
+    code
+) {
+
     switch (code) {
+
+        /*
+         * Java
+         */
+
         case "JAVA_MIGRATION":
-            return "Assess Java version migration readiness and modern Java language opportunities.";
-        case "JEE_SPRING":
-            return "Evaluate legacy Java EE components and Spring Boot modernization opportunities.";
-        case "MONOLITH_MICROSERVICES":
-            return "Analyze architecture indicators for modularization and microservices decomposition.";
-        case "XML_JSON":
-            return "Assess XML, XSLT and transformation workloads for modernization.";
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        ☕
+                    </div>
+
+                    <div className="agent-icon-label">
+                        JAVA
+                    </div>
+
+                </div>
+            );
+
+
+        /*
+         * Spring Boot
+         */
+
+        case "SPRING_BOOT_UPGRADE":
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        🌱
+                    </div>
+
+                    <div className="agent-icon-label">
+                        SPRING
+                    </div>
+
+                </div>
+            );
+
+
+        /*
+         * PQC / Quantum
+         */
+
         case "PQC_MIGRATION":
-            return "Identify cryptographic usage, HNDL exposure and post-quantum migration readiness.";
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph agent-quantum-glyph">
+                        ⚛
+                    </div>
+
+                    <div className="agent-icon-label">
+                        QUANTUM
+                    </div>
+
+                </div>
+            );
+
+
+        /*
+         * JEE → Spring
+         */
+
+        case "JEE_SPRING":
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        S
+                    </div>
+
+                    <div className="agent-icon-label">
+                        JEE
+                    </div>
+
+                </div>
+            );
+
+
+        /*
+         * Microservices
+         */
+
+        case "MONOLITH_MICROSERVICES":
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        ⬡
+                    </div>
+
+                    <div className="agent-icon-label">
+                        MICRO
+                    </div>
+
+                </div>
+            );
+
+
+        /*
+         * XML / JSON
+         */
+
+        case "XML_JSON":
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        {"{}"}
+                    </div>
+
+                    <div className="agent-icon-label">
+                        XML/JSON
+                    </div>
+
+                </div>
+            );
+
+
+        /*
+         * Sonar
+         */
+
         case "SONAR_INTELLIGENCE":
-            return "Analyze code quality and engineering improvement opportunities.";
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        ◎
+                    </div>
+
+                    <div className="agent-icon-label">
+                        SONAR
+                    </div>
+
+                </div>
+            );
+
+
+        /*
+         * JVM
+         */
+
         case "JVM_DIAGNOSTICS":
-            return "Assess JVM runtime and diagnostic modernization considerations.";
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        JVM
+                    </div>
+
+                    <div className="agent-icon-label">
+                        RUNTIME
+                    </div>
+
+                </div>
+            );
+
+
+        /*
+         * OWASP
+         */
+
         case "OWASP_SECURITY":
-            return "Review application security findings and modernization risks.";
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        ◆
+                    </div>
+
+                    <div className="agent-icon-label">
+                        OWASP
+                    </div>
+
+                </div>
+            );
+
+
         default:
+
+            return (
+
+                <div className="agent-visual">
+
+                    <div className="agent-icon-glyph">
+                        A
+                    </div>
+
+                    <div className="agent-icon-label">
+                        AGENT
+                    </div>
+
+                </div>
+            );
+    }
+}
+
+
+/*
+ * =========================================================
+ * FRIENDLY CODE LABEL
+ * =========================================================
+ */
+
+function getAgentCodeLabel(
+    code
+) {
+
+    switch (code) {
+
+        case "JAVA_MIGRATION":
+
+            return "JAVA";
+
+
+        case "SPRING_BOOT_UPGRADE":
+
+            return "SPRING BOOT";
+
+
+        case "PQC_MIGRATION":
+
+            return "PQC";
+
+
+        case "JEE_SPRING":
+
+            return "JEE → SPRING";
+
+
+        case "MONOLITH_MICROSERVICES":
+
+            return "MICROSERVICES";
+
+
+        case "XML_JSON":
+
+            return "XML ↔ JSON";
+
+
+        case "SONAR_INTELLIGENCE":
+
+            return "SONAR";
+
+
+        case "JVM_DIAGNOSTICS":
+
+            return "JVM";
+
+
+        case "OWASP_SECURITY":
+
+            return "OWASP";
+
+
+        default:
+
+            return code
+                ?.replaceAll(
+                    "_",
+                    " "
+                );
+    }
+}
+
+
+/*
+ * =========================================================
+ * FALLBACK AGENT NAME
+ * =========================================================
+ */
+
+function getAgentName(
+    code
+) {
+
+    switch (code) {
+
+        case "JAVA_MIGRATION":
+
+            return "Java Upgrade";
+
+
+        case "SPRING_BOOT_UPGRADE":
+
+            return "Spring Boot Upgrade";
+
+
+        case "PQC_MIGRATION":
+
+            return "Post-Quantum Migration";
+
+
+        case "JEE_SPRING":
+
+            return "JEE to Spring Boot";
+
+
+        case "MONOLITH_MICROSERVICES":
+
+            return "Monolith to Microservices";
+
+
+        case "XML_JSON":
+
+            return "XML / JSON Modernization";
+
+
+        case "SONAR_INTELLIGENCE":
+
+            return "Code Quality Intelligence";
+
+
+        case "JVM_DIAGNOSTICS":
+
+            return "JVM Diagnostics";
+
+
+        case "OWASP_SECURITY":
+
+            return "OWASP Security";
+
+
+        default:
+
+            return "Modernization Agent";
+    }
+}
+
+
+/*
+ * =========================================================
+ * AGENT DESCRIPTIONS
+ * =========================================================
+ */
+
+function getDefaultDescription(
+    code
+) {
+
+    switch (code) {
+
+        case "JAVA_MIGRATION":
+
+            return "Assess Java version migration readiness, framework compatibility and modern Java language opportunities.";
+
+
+        case "SPRING_BOOT_UPGRADE":
+
+            return "Assess Spring Boot upgrade readiness, Java requirements, Jakarta migration, Spring Security changes and configuration compatibility.";
+
+
+        case "PQC_MIGRATION":
+
+            return "Identify cryptographic usage, quantum-vulnerable algorithms, HNDL exposure and post-quantum migration readiness.";
+
+
+        case "JEE_SPRING":
+
+            return "Evaluate legacy Java EE components and identify opportunities to modernize applications using Spring Boot.";
+
+
+        case "MONOLITH_MICROSERVICES":
+
+            return "Analyze architecture indicators for modularization, bounded contexts and microservices decomposition.";
+
+
+        case "XML_JSON":
+
+            return "Assess XML, XSLT and transformation workloads for modernization and JSON-based integration.";
+
+
+        case "SONAR_INTELLIGENCE":
+
+            return "Analyze code quality, maintainability and engineering improvement opportunities.";
+
+
+        case "JVM_DIAGNOSTICS":
+
+            return "Assess JVM runtime, memory, performance and diagnostic modernization considerations.";
+
+
+        case "OWASP_SECURITY":
+
+            return "Review application security findings, common vulnerability patterns and modernization risks.";
+
+
+        default:
+
             return "Run specialized modernization intelligence against the selected project.";
     }
 }
-function getErrorMessage(error, fallback) {
+
+
+/*
+ * =========================================================
+ * CAPABILITY TAGS
+ * =========================================================
+ */
+
+function AgentCapabilities({
+    code
+}) {
+
+    const capabilities =
+        getAgentCapabilities(
+            code
+        );
+
+
+    if (
+        capabilities.length === 0
+    ) {
+
+        return null;
+    }
+
+
+    return (
+
+        <div className="agent-capabilities">
+
+            {
+                capabilities.map(
+                    capability => (
+
+                        <span
+                            key={
+                                capability
+                            }
+                        >
+                            {capability}
+                        </span>
+
+                    )
+                )
+            }
+
+        </div>
+    );
+}
+
+
+function getAgentCapabilities(
+    code
+) {
+
+    switch (code) {
+
+        case "JAVA_MIGRATION":
+
+            return [
+                "Java 8→21",
+                "API Changes",
+                "Modernization"
+            ];
+
+
+        case "SPRING_BOOT_UPGRADE":
+
+            return [
+                "Boot Upgrade",
+                "Jakarta",
+                "Security"
+            ];
+
+
+        case "PQC_MIGRATION":
+
+            return [
+                "Crypto Inventory",
+                "HNDL",
+                "PQC"
+            ];
+
+
+        case "JEE_SPRING":
+
+            return [
+                "Java EE",
+                "Spring Boot",
+                "Modernization"
+            ];
+
+
+        case "MONOLITH_MICROSERVICES":
+
+            return [
+                "Architecture",
+                "Boundaries",
+                "Services"
+            ];
+
+
+        case "XML_JSON":
+
+            return [
+                "XML",
+                "XSLT",
+                "JSON"
+            ];
+
+
+        case "SONAR_INTELLIGENCE":
+
+            return [
+                "Quality",
+                "Maintainability",
+                "Technical Debt"
+            ];
+
+
+        case "JVM_DIAGNOSTICS":
+
+            return [
+                "Memory",
+                "Runtime",
+                "Performance"
+            ];
+
+
+        case "OWASP_SECURITY":
+
+            return [
+                "Security",
+                "OWASP",
+                "Risk"
+            ];
+
+
+        default:
+
+            return [];
+    }
+}
+
+
+/*
+ * =========================================================
+ * ERROR MESSAGE
+ * =========================================================
+ */
+
+function getErrorMessage(
+    error,
+    fallback
+) {
+
     return error instanceof Error
         ? error.message
         : fallback;

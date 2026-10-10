@@ -432,26 +432,16 @@ export default function AgentsPage() {
 
                   return (
 
-                    <div
-                      key={
-                        agent.code
-                      }
-                      className="agent-card"
-                    >
+                <div
+                    key={agent.code}
+                    className={`agent-card ${getAgentCardClass(agent.code)}`}
+                >
 
-                      <div className="agent-card-header">
+                    <div className="agent-card-header">
 
-                        <div className="agent-icon">
-
-                          {
-                            getAgentIcon(
-                              agent.code
-                            )
-                          }
-
+                        <div className="agent-icon agent-icon-rich">
+                            {getAgentVisual(agent.code)}
                         </div>
-
-
                         <div>
 
                           <span className="agent-code">
@@ -580,39 +570,152 @@ export default function AgentsPage() {
 }
 
 
-function getAgentIcon(
-  code: string
-) {
+function getAgentCardClass(code) {
 
-  switch (code) {
+    switch (code) {
 
-    case "JAVA_MIGRATION":
-      return "J";
+        case "JAVA_MIGRATION":
+            return "agent-card-java";
 
-    case "JEE_SPRING":
-      return "S";
+        case "SPRING_BOOT_UPGRADE":
+            return "agent-card-spring";
 
-    case "MONOLITH_MICROSERVICES":
-      return "M";
+        case "PQC_MIGRATION":
+            return "agent-card-quantum";
 
-    case "XML_JSON":
-      return "X";
+        case "JEE_SPRING":
+            return "agent-card-jee";
 
-    case "PQC_MIGRATION":
-      return "Q";
+        default:
+            return "agent-card-default";
+    }
+}
 
-    case "SONAR_INTELLIGENCE":
-      return "◎";
 
-    case "JVM_DIAGNOSTICS":
-      return "V";
+function getAgentVisual(code) {
 
-    case "OWASP_SECURITY":
-      return "◆";
+    switch (code) {
 
-    default:
-      return "A";
-  }
+        case "JAVA_MIGRATION":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        ☕
+                    </div>
+                    <div className="agent-icon-label">
+                        JAVA
+                    </div>
+                </div>
+            );
+
+        case "SPRING_BOOT_UPGRADE":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        🌱
+                    </div>
+                    <div className="agent-icon-label">
+                        SPRING
+                    </div>
+                </div>
+            );
+
+        case "PQC_MIGRATION":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        ⚛
+                    </div>
+                    <div className="agent-icon-label">
+                        QUANTUM
+                    </div>
+                </div>
+            );
+
+        case "JEE_SPRING":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        S
+                    </div>
+                    <div className="agent-icon-label">
+                        JEE
+                    </div>
+                </div>
+            );
+
+        case "MONOLITH_MICROSERVICES":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        M
+                    </div>
+                    <div className="agent-icon-label">
+                        MICRO
+                    </div>
+                </div>
+            );
+
+        case "XML_JSON":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        X
+                    </div>
+                    <div className="agent-icon-label">
+                        XML/JSON
+                    </div>
+                </div>
+            );
+
+        case "SONAR_INTELLIGENCE":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        ◎
+                    </div>
+                    <div className="agent-icon-label">
+                        SONAR
+                    </div>
+                </div>
+            );
+
+        case "JVM_DIAGNOSTICS":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        V
+                    </div>
+                    <div className="agent-icon-label">
+                        JVM
+                    </div>
+                </div>
+            );
+
+        case "OWASP_SECURITY":
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        ◆
+                    </div>
+                    <div className="agent-icon-label">
+                        OWASP
+                    </div>
+                </div>
+            );
+
+        default:
+            return (
+                <div className="agent-visual">
+                    <div className="agent-icon-glyph">
+                        A
+                    </div>
+                    <div className="agent-icon-label">
+                        AGENT
+                    </div>
+                </div>
+            );
+    }
 }
 
 
@@ -626,9 +729,9 @@ function getDefaultDescription(
 
       return "Assess Java version migration readiness and modern Java language opportunities.";
 
-    case "JEE_SPRING":
+    case "SPRING_BOOT_UPGRADE":
 
-      return "Evaluate legacy Java EE components and Spring Boot modernization opportunities.";
+      return "Assess Spring Boot version upgrade readiness, Jakarta migration, Spring Security, dependencies and configuration changes.";
 
     case "MONOLITH_MICROSERVICES":
 

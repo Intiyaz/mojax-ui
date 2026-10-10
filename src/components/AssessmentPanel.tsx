@@ -33,6 +33,9 @@ import JavaModernizationReport
 import JavaMigrationPlannerReport
     from "./migration/JavaMigrationPlannerReport";
 
+import SpringBootAssessmentReport
+    from "./springboot/SpringBootAssessmentReport";
+
 
 function StatusBadge({
     status
@@ -69,6 +72,10 @@ export default function AssessmentPanel({
     const isPqcMigration =
         assessment.agentCode ===
         "PQC_MIGRATION";
+    
+    const isSpringBootUpgrade =
+    assessment.agentCode ===
+    "SPRING_BOOT_UPGRADE";
 
     const metrics =
         assessment.metrics || {};
@@ -178,9 +185,11 @@ export default function AssessmentPanel({
                                 {
                                     isPqcMigration
                                         ? "Post-Quantum Cryptography Assessment"
-                                        : formatName(
-                                            assessment.agentCode
-                                        )
+                                        : isSpringBootUpgrade
+                                            ? "Spring Boot Upgrade Assessment"
+                                            : formatName(
+                                                assessment.agentCode
+                                            )
                                 }
                             </h2>
 
@@ -217,7 +226,9 @@ export default function AssessmentPanel({
                         title={
                             isPqcMigration
                                 ? "PQC Readiness"
-                                : "Java 21 Readiness"
+                                : isSpringBootUpgrade
+                                    ? "Spring Boot Readiness"
+                                    : "Java 21 Readiness"
                         }
                         score={
                             assessment.readinessScore
@@ -228,7 +239,9 @@ export default function AssessmentPanel({
                         title={
                             isPqcMigration
                                 ? "Quantum Migration Risk"
-                                : "Migration Risk"
+                                : isSpringBootUpgrade
+                                    ? "Spring Boot Migration Risk"
+                                    : "Migration Risk"
                         }
                         score={
                             assessment.riskScore
@@ -338,6 +351,25 @@ export default function AssessmentPanel({
                         <PqcAssessmentReport
                             analysis={
                                 assessment.pqcAnalysis
+                            }
+                        />
+
+                    </section>
+
+                )}
+
+                {isSpringBootUpgrade && (
+
+                    <section data-report-search>
+
+                        <SpringBootAssessmentReport
+                            metrics={
+                                assessment.metrics
+                                || {}
+                            }
+                            findings={
+                                assessment.findings
+                                || []
                             }
                         />
 
