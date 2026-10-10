@@ -3,7 +3,9 @@ import {
 } from "../services/apiFetch";
 
 
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "https://engineeringai-java-modernization.victoriouscliff-8a4c40e2.southindia.azurecontainerapps.io";
+//const API_BASE_URL = "http://localhost:8080";
+
 
 export async function downloadAssessmentPdf(
     assessment
