@@ -287,9 +287,12 @@ export type Assessment = {
  * agentCode
  */
 export type RunAssessmentRequest = {
-  projectId: string;
 
-  agentCode: string;
+    projectId: string;
+
+    agentCode: string;
+
+    parameters?: Record<string, unknown>;
 };
 
 
@@ -340,32 +343,34 @@ Promise<Assessment> {
  */
 
 export async function runAssessment(
-  projectId: string,
-  agentCode: string
+    projectId: string,
+    agentCode: string,
+    parameters: Record<string, unknown> = {}
 ):
 Promise<Assessment> {
 
-  if (!projectId) {
+    if (!projectId) {
 
-    throw new Error(
-      "Project id is required."
-    );
-  }
-
-
-  if (!agentCode) {
-
-    throw new Error(
-      "Agent code is required."
-    );
-  }
-
-
-  return apiPost<Assessment>(
-    "/api/v1/assessments",
-    {
-      projectId,
-      agentCode
+        throw new Error(
+            "Project id is required."
+        );
     }
-  );
+
+
+    if (!agentCode) {
+
+        throw new Error(
+            "Agent code is required."
+        );
+    }
+
+
+    return apiPost<Assessment>(
+        "/api/v1/assessments",
+        {
+            projectId,
+            agentCode,
+            parameters
+        }
+    );
 }

@@ -23,15 +23,34 @@ export async function getAssessment(assessmentId) {
  * RUN ASSESSMENT
  * ============================================================
  */
-export async function runAssessment(projectId, agentCode) {
+export async function runAssessment(
+    projectId,
+    agentCode,
+    parameters = {}
+) {
+
     if (!projectId) {
-        throw new Error("Project id is required.");
+
+        throw new Error(
+            "Project id is required."
+        );
     }
+
+
     if (!agentCode) {
-        throw new Error("Agent code is required.");
+
+        throw new Error(
+            "Agent code is required."
+        );
     }
-    return apiPost("/api/v1/assessments", {
-        projectId,
-        agentCode
-    });
+
+
+    return apiPost(
+        "/api/v1/assessments",
+        {
+            projectId,
+            agentCode,
+            parameters
+        }
+    );
 }

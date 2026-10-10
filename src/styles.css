@@ -13083,3 +13083,80 @@ header p {
 .agent-card-quantum:hover {
     border-color: #b6c1ff;
 }
+
+/* =========================================================
+   AGENT TARGET VERSION
+   ========================================================= */
+
+.agent-target-version {
+    display: grid;
+    gap: 6px;
+
+    margin-bottom: 14px;
+    padding: 12px;
+
+    border: 1px solid #cfe8d5;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5fcf6,
+            #eef9f1
+        );
+}
+
+
+.agent-target-version label {
+    color: #437153;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+    letter-spacing: .6px;
+}
+
+
+.agent-target-version select {
+    width: 100%;
+
+    padding: 9px 10px;
+
+    border: 1px solid #b9d8c2;
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #ffffff;
+    color: #315a40;
+
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.agent-target-version select:focus {
+    border-color: #65a979;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(80, 165, 105, .10);
+}
+
+
+.agent-target-version select:disabled {
+    opacity: .6;
+    cursor: default;
+}
+
+
+.agent-target-version small {
+    color: #7a8b80;
+
+    font-size: 8px;
+    line-height: 1.45;
+}

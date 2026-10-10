@@ -33,6 +33,12 @@ export default function AgentsPage() {
     ] =
         useState([]);
 
+    const [
+        springBootTargetVersion,
+        setSpringBootTargetVersion
+    ] =
+        useState("3.5");
+
 
     const [
         projects,
@@ -218,10 +224,20 @@ export default function AgentsPage() {
             );
 
 
+            const parameters =
+                agentCode === "SPRING_BOOT_UPGRADE"
+                    ? {
+                        targetVersion:
+                            springBootTargetVersion
+                    }
+                    : {};
+
+
             const assessment =
                 await runAssessment(
                     selectedProjectId,
-                    agentCode
+                    agentCode,
+                    parameters
                 );
 
 
@@ -511,7 +527,57 @@ export default function AgentsPage() {
 
                                             </div>
 
+                                            {
+                                                agent.code === "SPRING_BOOT_UPGRADE"
+                                                &&
+                                                (
 
+                                                    <div
+                                                        className="agent-target-version"
+                                                        onClick={
+                                                            event =>
+                                                                event.stopPropagation()
+                                                        }
+                                                    >
+
+                                                        <label
+                                                            htmlFor="spring-boot-target-version"
+                                                        >
+                                                            Target Spring Boot
+                                                        </label>
+
+
+                                                        <select
+                                                            id="spring-boot-target-version"
+                                                            value={
+                                                                springBootTargetVersion
+                                                            }
+                                                            disabled={
+                                                                runningAgentCode !== null
+                                                            }
+                                                            onChange={
+                                                                event =>
+                                                                    setSpringBootTargetVersion(
+                                                                        event.target.value
+                                                                    )
+                                                            }
+                                                        >
+
+                                                            <option value="3.5">
+                                                                 Spring Boot 3.5.x
+                                                            </option>
+
+                                                            <option value="4.1">
+                                                                Spring Boot 4.1.x
+                                                            </option>
+
+                                                        </select>
+
+
+                                                    </div>
+
+                                                )
+                                            }
                                             {/* DESCRIPTION */}
 
                                             <p className="agent-description">
