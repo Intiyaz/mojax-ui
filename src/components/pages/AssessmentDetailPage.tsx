@@ -479,54 +479,6 @@ export default function AssessmentDetailPage() {
 
       <div className="assessment-toolbar">
 
-        <div className="report-search-box">
-
-          <span className="report-search-icon">
-            ⌕
-          </span>
-
-          <input
-            type="search"
-            value={
-              reportSearch
-            }
-            placeholder="Search report: Hibernate, Jakarta, security, package..."
-            onChange={
-              event =>
-                setReportSearch(
-                  event.target.value
-                )
-            }
-          />
-
-          {reportSearch && (
-
-            <button
-              type="button"
-              className="report-search-clear"
-              onClick={
-                () =>
-                  setReportSearch("")
-              }
-            >
-              Clear
-            </button>
-
-          )}
-
-        </div>
-
-
-        {visibleSectionCount !== null && (
-
-          <span className="report-search-result">
-            {visibleSectionCount} matching section
-            {visibleSectionCount === 1 ? "" : "s"}
-          </span>
-
-        )}
-
-
         {assessment.agentCode === "PQC_MIGRATION"
           && assessment.pqcAnalysis && (
 

@@ -150,13 +150,17 @@ export default function SpringBootAssessmentReport({
                         →
                     </div>
 
-                    <VersionCard
-                        label="Target Spring Boot"
-                        value={targetBoot}
-                        target
+                    <TargetBaseline
+                        targetVersion={
+                            metrics.targetSpringBootVersion
+                        }
                     />
 
+                    
+
                 </div>
+
+                
 
 
                 <div className="springboot-runtime-grid">
@@ -299,7 +303,11 @@ export default function SpringBootAssessmentReport({
 
             </section>
 
-
+            <EcosystemCompatibility
+                                findings={
+                                    findings
+                                }
+                            />
             {/* =================================================
                 UPGRADE STRATEGY
                ================================================= */}
@@ -313,7 +321,7 @@ export default function SpringBootAssessmentReport({
                         <div className="springboot-section-heading">
 
                             <div className="springboot-section-number">
-                                03
+                                04
                             </div>
 
                             <div>
@@ -710,3 +718,494 @@ function asUpgradePlan(
 
     return value as UpgradePlan;
 }
+
+function TargetBaseline({
+    targetVersion
+}) {
+
+    const version =
+        String(
+            targetVersion || ""
+        );
+
+
+    const isBoot4 =
+        version.startsWith("4");
+
+
+    return (
+
+        <div className="springboot-target-baseline">
+
+            <div className="springboot-target-baseline-title">
+
+                TARGET PLATFORM BASELINE
+
+            </div>
+
+
+            <div className="springboot-target-baseline-grid">
+
+                <BaselineItem
+                    label="Java"
+                    value="17+"
+                />
+
+
+                <BaselineItem
+                    label="Spring Framework"
+                    value={
+                        isBoot4
+                            ? "7.x"
+                            : "6.2.x"
+                    }
+                />
+
+
+                <BaselineItem
+                    label="Jakarta"
+                    value={
+                        isBoot4
+                            ? "Jakarta EE 11"
+                            : "Jakarta EE 10"
+                    }
+                />
+
+
+                <BaselineItem
+                    label="Servlet"
+                    value={
+                        isBoot4
+                            ? "Servlet 6.1"
+                            : "Servlet 6.0"
+                    }
+                />
+
+
+                {
+                    isBoot4
+                    &&
+                    (
+
+                        <BaselineItem
+                            label="Migration Path"
+                            value="3.5.x → 4.1.x"
+                        />
+
+                    )
+                }
+
+            </div>
+
+        </div>
+    );
+}
+
+
+function BaselineItem({
+    label,
+    value
+}) {
+
+    return (
+
+        <div className="springboot-baseline-item">
+
+            <span>
+                {label}
+            </span>
+
+            <strong>
+                {value}
+            </strong>
+
+        </div>
+    );
+}
+
+function EcosystemCompatibility({
+    findings = []
+}) {
+
+    const categories =
+        collectFindingCategories(
+            findings
+        );
+
+
+    const items = [
+
+        {
+            label: "Spring Cloud",
+            category: "SPRING_CLOUD",
+            icon: "☁"
+        },
+
+        {
+            label: "Dependencies",
+            category: "DEPENDENCY",
+            icon: "📦"
+        },
+
+        {
+            label: "Persistence",
+            category: "PERSISTENCE",
+            icon: "◫"
+        },
+
+        {
+            label: "Spring Security",
+            category: "SPRING_SECURITY",
+            icon: "◆"
+        },
+
+        {
+            label: "Observability",
+            category: "OBSERVABILITY",
+            icon: "◎"
+        },
+
+        {
+            label: "Servlet Runtime",
+            category: "SERVLET",
+            icon: "⬡"
+        }
+    ];
+
+
+    return (
+
+        <section className="springboot-ecosystem">
+
+            <div className="springboot-section-heading">
+
+                <div className="springboot-section-number">
+                    03
+                </div>
+
+
+                <div>
+
+                    <span>
+                        ECOSYSTEM READINESS
+                    </span>
+
+
+                    <h2>
+                        Dependency Compatibility
+                    </h2>
+
+
+                    <p>
+                        Compatibility assessment across
+                        the Spring Boot application ecosystem.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div className="springboot-ecosystem-grid">
+
+                {
+                    items.map(
+                        item => {
+
+                            const status =
+                                resolveCategoryStatus(
+                                    categories[
+                                        item.category
+                                    ]
+                                );
+
+
+                            return (
+
+                                <EcosystemCard
+                                    key={
+                                        item.category
+                                    }
+                                    icon={
+                                        item.icon
+                                    }
+                                    label={
+                                        item.label
+                                    }
+                                    status={
+                                        status
+                                    }
+                                />
+
+                            );
+                        }
+                    )
+                }
+
+            </div>
+
+        </section>
+    );
+}
+
+
+function EcosystemCard({
+    icon,
+    label,
+    status
+}) {
+
+    return (
+
+        <div
+            className={
+                `springboot-ecosystem-card ${status.css}`
+            }
+        >
+
+            <div className="springboot-ecosystem-icon">
+                {icon}
+            </div>
+
+
+            <div className="springboot-ecosystem-content">
+
+                <span>
+                    {label}
+                </span>
+
+
+                <strong>
+                    {status.label}
+                </strong>
+
+            </div>
+
+        </div>
+    );
+}
+
+function collectFindingCategories(
+    findings
+) {
+
+    const result = {};
+
+
+    findings.forEach(
+        finding => {
+
+            /*
+             * Structured future finding
+             */
+            if (
+                finding
+                &&
+                typeof finding === "object"
+            ) {
+
+                const category =
+                    finding.category;
+
+
+                if (!category) {
+                    return;
+                }
+
+
+                if (!result[category]) {
+                    result[category] = [];
+                }
+
+
+                result[category].push(
+                    finding
+                );
+
+                return;
+            }
+
+
+            /*
+             * String findings
+             *
+             * Because AgentResult currently converts
+             * Spring Boot findings into strings.
+             */
+            const value =
+                String(
+                    finding || ""
+                );
+
+
+            detectCategoryFromText(
+                value,
+                result
+            );
+        }
+    );
+
+
+    return result;
+}
+
+
+function detectCategoryFromText(
+    value,
+    result
+) {
+
+    const mappings = [
+
+        [
+            "SPRING_CLOUD",
+            [
+                "Spring Cloud",
+                "Hystrix",
+                "Ribbon",
+                "Zuul",
+                "Sleuth"
+            ]
+        ],
+
+        [
+            "PERSISTENCE",
+            [
+                "Hibernate",
+                "Persistence",
+                "JPA"
+            ]
+        ],
+
+        [
+            "SPRING_SECURITY",
+            [
+                "Spring Security",
+                "SecurityFilterChain",
+                "WebSecurityConfigurerAdapter"
+            ]
+        ],
+
+        [
+            "OBSERVABILITY",
+            [
+                "Micrometer",
+                "Tracing",
+                "Observability"
+            ]
+        ],
+
+        [
+            "SERVLET",
+            [
+                "Servlet",
+                "Undertow",
+                "Tomcat",
+                "Jetty"
+            ]
+        ],
+
+        [
+            "DEPENDENCY",
+            [
+                "dependency",
+                "Springfox",
+                "springdoc"
+            ]
+        ]
+
+    ];
+
+
+    mappings.forEach(
+        ([category, words]) => {
+
+            const matches =
+                words.some(
+                    word =>
+                        value
+                            .toLowerCase()
+                            .includes(
+                                word.toLowerCase()
+                            )
+                );
+
+
+            if (!matches) {
+                return;
+            }
+
+
+            if (!result[category]) {
+                result[category] = [];
+            }
+
+
+            result[category].push(
+                value
+            );
+        }
+    );
+}
+
+function resolveCategoryStatus(
+    categoryFindings
+) {
+
+    if (
+        !categoryFindings
+        ||
+        categoryFindings.length === 0
+    ) {
+
+        return {
+            label: "No Issues",
+            css: "compatible"
+        };
+    }
+
+
+    const text =
+        categoryFindings
+            .map(
+                item =>
+                    typeof item === "string"
+                        ? item
+                        : JSON.stringify(
+                            item
+                        )
+            )
+            .join(" ")
+            .toUpperCase();
+
+
+    if (
+        text.includes("[CRITICAL]")
+        ||
+        text.includes("[HIGH]")
+    ) {
+
+        return {
+            label: "Action Required",
+            css: "action"
+        };
+    }
+
+
+    if (
+        text.includes("[MEDIUM]")
+    ) {
+
+        return {
+            label: "Review",
+            css: "review"
+        };
+    }
+
+
+    return {
+        label: "Compatible",
+        css: "compatible"
+    };
+}
+

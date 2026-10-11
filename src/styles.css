@@ -12866,6 +12866,8 @@ header p {
     color: #587161;
 
     white-space: nowrap;
+
+    align-content: center;
 }
 
 
@@ -13159,4 +13161,215 @@ header p {
 
     font-size: 8px;
     line-height: 1.45;
+}
+
+.springboot-target-baseline {
+    margin: 20px 26px 26px;
+    padding: 16px;
+
+    border: 1px solid #d8e9dc;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f7fcf8,
+            #eef8f1
+        );
+}
+
+
+.springboot-target-baseline-title {
+    margin-bottom: 12px;
+
+    color: #557764;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: .8px;
+    text-transform: uppercase;
+}
+
+
+.springboot-target-baseline-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+
+.springboot-baseline-item {
+    padding: 10px;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    box-shadow:
+        inset 0 0 0 1px
+        #e4eee7;
+}
+
+
+.springboot-baseline-item span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #7d8e82;
+
+    font-size: 8px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+
+.springboot-baseline-item strong {
+    color: #315d42;
+
+    font-size: 11px;
+}
+
+
+@media (max-width: 900px) {
+
+    .springboot-target-baseline-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* =========================================================
+   SPRING BOOT ECOSYSTEM COMPATIBILITY
+   ========================================================= */
+
+.springboot-ecosystem {
+    margin-top: 24px;
+}
+
+
+.springboot-ecosystem-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+
+    padding:
+        10px 26px 26px;
+}
+
+
+.springboot-ecosystem-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 70px;
+
+    padding: 13px;
+
+    border: 1px solid #e1e8e4;
+    border-radius: 11px;
+
+    background: #ffffff;
+}
+
+
+.springboot-ecosystem-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 38px;
+
+    border-radius: 9px;
+
+    background: #f4f7f5;
+
+    font-size: 18px;
+}
+
+
+.springboot-ecosystem-content {
+    display: grid;
+    gap: 4px;
+}
+
+
+.springboot-ecosystem-content span {
+    color: #728078;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+
+.springboot-ecosystem-content strong {
+    font-size: 11px;
+}
+
+
+.springboot-ecosystem-card.compatible {
+    border-color: #cfe9d6;
+
+    background: #f7fcf8;
+}
+
+
+.springboot-ecosystem-card.compatible strong {
+    color: #398653;
+}
+
+
+.springboot-ecosystem-card.review {
+    border-color: #f0dda6;
+
+    background: #fffdf6;
+}
+
+
+.springboot-ecosystem-card.review strong {
+    color: #96731e;
+}
+
+
+.springboot-ecosystem-card.action {
+    border-color: #efc3b8;
+
+    background: #fff9f7;
+}
+
+
+.springboot-ecosystem-card.action strong {
+    color: #b2543c;
+}
+
+
+@media (max-width: 900px) {
+
+    .springboot-ecosystem-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .springboot-ecosystem-grid {
+        grid-template-columns: 1fr;
+    }
 }
