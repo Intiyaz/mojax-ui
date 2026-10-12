@@ -3817,12 +3817,12 @@ header p {
 }
 
 .agent-code {
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 800;
 
   letter-spacing: 0.08em;
 
-  color: #6672a3;
+  color: #800909;
 }
 
 .settings-grid {
@@ -8274,7 +8274,7 @@ header p {
     margin-bottom: 12px;
     padding: 17px 18px;
 
-    border: 1px solid #dee6f0;
+    border: 2px solid #00008B;
     border-radius: 12px;
 
     background:
@@ -8306,7 +8306,7 @@ header p {
 
     padding: 10px 12px;
 
-    border: 1px solid #d4dde9;
+    border: 2px solid #00008B;
     border-radius: 8px;
 
     outline: 0;
@@ -8329,7 +8329,7 @@ header p {
 
     color: #728097;
 
-    font-size: 9px;
+    font-size: 12px;
 }
 
 .selected-project-summary strong {
@@ -8406,9 +8406,9 @@ header p {
 }
 
 .agent-code {
-    color: #8795a8;
+    color: #800909;
 
-    font-size: 10px;
+    font-size: 20px;
     font-weight: 900;
     letter-spacing: .7px;
 }
@@ -8470,7 +8470,7 @@ header p {
     color: #ffffff;
 
     font-family: inherit;
-    font-size: 9px;
+    font-size: 15px;
     font-weight: 850;
 
     cursor: pointer;
@@ -12953,13 +12953,14 @@ header p {
     background: linear-gradient(90deg, #6f63ff, #2aa3ff);
 }
 
-.agent-card-jee::before {
-    background: linear-gradient(90deg, #4d8bff, #6d5efc);
+.agent-card-security::before {
+    background: linear-gradient(90deg, #1F0954, #1F0954);
 }
 
 .agent-card-default::before {
     background: linear-gradient(90deg, #7a8aa0, #5d6d83);
 }
+
 
 
 /* ---------------------------------------------------------

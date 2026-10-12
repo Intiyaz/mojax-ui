@@ -1676,7 +1676,7 @@ function EcosystemCard({
 }
 
 function collectFindingCategories(
-    findings
+    findings = []
 ) {
 
     const result = {};
@@ -1686,30 +1686,41 @@ function collectFindingCategories(
         finding => {
 
             /*
-             * Structured future finding
+             * Backend AssessmentFinding object.
+             *
+             * Current Spring Boot AgentResult findings are
+             * converted by AssessmentService into:
+             *
+             * {
+             *   severity: "INFO",
+             *   category: "ASSESSMENT",
+             *   title: "Assessment Finding",
+             *   description: "[HIGH] SB-CLOUD-..."
+             * }
+             *
+             * Therefore we must inspect the description as well.
              */
+
             if (
                 finding
                 &&
                 typeof finding === "object"
             ) {
 
-                const category =
-                    finding.category;
+                const text = [
+                    finding.category,
+                    finding.title,
+                    finding.description,
+                    finding.evidence,
+                    finding.recommendation
+                ]
+                    .filter(Boolean)
+                    .join(" ");
 
 
-                if (!category) {
-                    return;
-                }
-
-
-                if (!result[category]) {
-                    result[category] = [];
-                }
-
-
-                result[category].push(
-                    finding
+                detectCategoryFromText(
+                    text,
+                    result
                 );
 
                 return;
@@ -1717,19 +1728,12 @@ function collectFindingCategories(
 
 
             /*
-             * String findings
-             *
-             * Because AgentResult currently converts
-             * Spring Boot findings into strings.
+             * String finding support.
              */
-            const value =
+            detectCategoryFromText(
                 String(
                     finding || ""
-                );
-
-
-            detectCategoryFromText(
-                value,
+                ),
                 result
             );
         }
@@ -1745,79 +1749,109 @@ function detectCategoryFromText(
     result
 ) {
 
+    if (!value) {
+        return;
+    }
+
+
+    const normalized =
+        value.toLowerCase();
+
+
     const mappings = [
 
-        [
-            "SPRING_CLOUD",
-            [
-                "Spring Cloud",
-                "Hystrix",
-                "Ribbon",
-                "Zuul",
-                "Sleuth"
-            ]
-        ],
+        {
+            category: "SPRING_CLOUD",
 
-        [
-            "PERSISTENCE",
-            [
-                "Hibernate",
-                "Persistence",
-                "JPA"
+            keywords: [
+                "sb-cloud-",
+                "spring cloud",
+                "hystrix",
+                "ribbon",
+                "zuul",
+                "sleuth",
+                "release train"
             ]
-        ],
+        },
 
-        [
-            "SPRING_SECURITY",
-            [
-                "Spring Security",
-                "SecurityFilterChain",
-                "WebSecurityConfigurerAdapter"
+        {
+            category: "PERSISTENCE",
+
+            keywords: [
+                "sb-hibernate-",
+                "hibernate",
+                "persistence",
+                "javax.persistence",
+                "jakarta.persistence",
+                "jpa"
             ]
-        ],
+        },
 
-        [
-            "OBSERVABILITY",
-            [
-                "Micrometer",
-                "Tracing",
-                "Observability"
+        {
+            category: "SPRING_SECURITY",
+
+            keywords: [
+                "sb-sec-",
+                "spring security",
+                "websecurityconfigureradapter",
+                "securityfilterchain",
+                "authorizerequests",
+                "authorizehttprequests",
+                "requestmatchers"
             ]
-        ],
+        },
 
-        [
-            "SERVLET",
-            [
-                "Servlet",
-                "Undertow",
-                "Tomcat",
-                "Jetty"
+        {
+            category: "OBSERVABILITY",
+
+            keywords: [
+                "sb-obs-",
+                "micrometer",
+                "observability",
+                "tracing"
             ]
-        ],
+        },
 
-        [
-            "DEPENDENCY",
-            [
+        {
+            category: "SERVLET",
+
+            keywords: [
+                "sb4-server-",
+                "sb4-servlet-",
+                "undertow",
+                "servlet 6.1",
+                "servlet runtime",
+                "tomcat",
+                "jetty"
+            ]
+        },
+
+        {
+            category: "DEPENDENCY",
+
+            keywords: [
+                "sb-dep-",
+                "sb-openapi-",
                 "dependency",
-                "Springfox",
-                "springdoc"
+                "dependencies",
+                "springfox",
+                "springdoc",
+                "mysql-connector-java"
             ]
-        ]
+        }
 
     ];
 
 
     mappings.forEach(
-        ([category, words]) => {
+        mapping => {
 
             const matches =
-                words.some(
-                    word =>
-                        value
-                            .toLowerCase()
-                            .includes(
-                                word.toLowerCase()
-                            )
+                mapping.keywords.some(
+                    keyword =>
+                        normalized.includes(
+                            keyword.toLowerCase()
+                        )
                 );
 
 
@@ -1826,12 +1860,21 @@ function detectCategoryFromText(
             }
 
 
-            if (!result[category]) {
-                result[category] = [];
+            if (
+                !result[
+                    mapping.category
+                ]
+            ) {
+
+                result[
+                    mapping.category
+                ] = [];
             }
 
 
-            result[category].push(
+            result[
+                mapping.category
+            ].push(
                 value
             );
         }
@@ -1861,9 +1904,7 @@ function resolveCategoryStatus(
                 item =>
                     typeof item === "string"
                         ? item
-                        : JSON.stringify(
-                            item
-                        )
+                        : JSON.stringify(item)
             )
             .join(" ")
             .toUpperCase();
@@ -1871,7 +1912,16 @@ function resolveCategoryStatus(
 
     if (
         text.includes("[CRITICAL]")
-        ||
+    ) {
+
+        return {
+            label: "Critical",
+            css: "action"
+        };
+    }
+
+
+    if (
         text.includes("[HIGH]")
     ) {
 
@@ -1893,8 +1943,30 @@ function resolveCategoryStatus(
     }
 
 
+    if (
+        text.includes("[LOW]")
+    ) {
+
+        return {
+            label: "Minor Review",
+            css: "review"
+        };
+    }
+
+
+    if (
+        text.includes("[INFO]")
+    ) {
+
+        return {
+            label: "Detected",
+            css: "compatible"
+        };
+    }
+
+
     return {
-        label: "Compatible",
-        css: "compatible"
+        label: "Detected",
+        css: "review"
     };
 }

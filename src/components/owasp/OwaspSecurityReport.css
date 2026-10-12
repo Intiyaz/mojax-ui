@@ -1,0 +1,614 @@
+/* =========================================================
+   OWASP SECURITY REPORT
+   ========================================================= */
+
+.owasp-report {
+    margin-top: 22px;
+    display: grid;
+    gap: 22px;
+}
+
+
+.owasp-report > section {
+    border: 1px solid #e4e7ec;
+    border-radius: 14px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.owasp-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid #edf0f3;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc,
+            #ffffff
+        );
+}
+
+
+.owasp-section-heading > span {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #172554;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.owasp-section-heading small {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 9px;
+    font-weight: 900;
+
+    letter-spacing: 1.1px;
+}
+
+
+.owasp-section-heading h2 {
+    margin: 3px 0 0;
+
+    color: #172033;
+
+    font-size: 19px;
+}
+
+
+/* =========================================================
+   OVERVIEW
+   ========================================================= */
+
+.owasp-overview-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+
+    padding: 20px 24px 24px;
+}
+
+
+.owasp-metric-card {
+    min-height: 82px;
+
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+
+    border: 1px solid #e5e9ef;
+    border-radius: 11px;
+
+    background: #fafbfd;
+}
+
+
+.owasp-metric-card span {
+    color: #758094;
+
+    font-size: 9px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+
+.owasp-metric-card strong {
+    color: #1e293b;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   SEVERITY
+   ========================================================= */
+
+.owasp-severity-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 12px;
+
+    padding: 20px 24px 24px;
+}
+
+
+.owasp-severity-card {
+    padding: 16px;
+
+    display: grid;
+    gap: 4px;
+
+    border-radius: 11px;
+    border: 1px solid #e5e7eb;
+
+    text-align: center;
+}
+
+
+.owasp-severity-card strong {
+    font-size: 24px;
+}
+
+
+.owasp-severity-card span {
+    font-size: 9px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+    letter-spacing: .8px;
+}
+
+
+.owasp-severity-card.critical {
+    background: #fff5f5;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+
+.owasp-severity-card.high {
+    background: #fff8f3;
+    border-color: #fed7aa;
+    color: #c2410c;
+}
+
+
+.owasp-severity-card.medium {
+    background: #fffdf2;
+    border-color: #fde68a;
+    color: #a16207;
+}
+
+
+.owasp-severity-card.low {
+    background: #f5f9ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+
+.owasp-severity-card.info {
+    background: #f7fafc;
+    color: #475569;
+}
+
+
+/* =========================================================
+   CATEGORY MATRIX
+   ========================================================= */
+
+.owasp-category-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    padding: 20px 24px 24px;
+}
+
+
+.owasp-category-card {
+    padding: 15px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 11px;
+
+    background: #ffffff;
+}
+
+
+.owasp-category-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+
+.owasp-category-code {
+    color: #172554;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+
+.owasp-category-status {
+    padding: 4px 7px;
+
+    border-radius: 999px;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+}
+
+
+.owasp-category-status.clear {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+
+.owasp-category-status.critical {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+
+.owasp-category-status.high {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+
+.owasp-category-status.medium {
+    background: #fef3c7;
+    color: #a16207;
+}
+
+
+.owasp-category-status.low {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+
+.owasp-category-status.info {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+
+.owasp-category-card h3 {
+    margin: 10px 0 14px;
+
+    color: #334155;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+
+.owasp-category-footer {
+    display: flex;
+    justify-content: space-between;
+
+    padding-top: 10px;
+
+    border-top: 1px solid #edf2f7;
+}
+
+
+.owasp-category-footer span {
+    color: #7c8799;
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
+
+.owasp-category-footer strong {
+    color: #172554;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FINDINGS
+   ========================================================= */
+
+.owasp-findings-list {
+    padding: 20px 24px 24px;
+
+    display: grid;
+    gap: 14px;
+}
+
+
+.owasp-finding-card {
+    padding: 17px;
+
+    border: 1px solid #e5e7eb;
+    border-left-width: 5px;
+    border-radius: 10px;
+
+    background: #ffffff;
+}
+
+
+.owasp-finding-card.critical {
+    border-left-color: #b91c1c;
+}
+
+
+.owasp-finding-card.high {
+    border-left-color: #ea580c;
+}
+
+
+.owasp-finding-card.medium {
+    border-left-color: #ca8a04;
+}
+
+
+.owasp-finding-card.low {
+    border-left-color: #2563eb;
+}
+
+
+.owasp-finding-card.info {
+    border-left-color: #64748b;
+}
+
+
+.owasp-finding-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+.owasp-finding-header > div {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+
+.owasp-severity-badge,
+.owasp-category-badge,
+.owasp-cwe-badge,
+.owasp-confidence {
+    padding: 4px 7px;
+
+    border-radius: 6px;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: .35px;
+}
+
+
+.owasp-severity-badge.critical {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+
+.owasp-severity-badge.high {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+
+.owasp-severity-badge.medium {
+    background: #fef3c7;
+    color: #a16207;
+}
+
+
+.owasp-severity-badge.low {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+
+.owasp-severity-badge.info {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+
+.owasp-category-badge {
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+
+.owasp-cwe-badge {
+    background: #f0fdfa;
+    color: #0f766e;
+}
+
+
+.owasp-confidence {
+    background: #f8fafc;
+    color: #475569;
+}
+
+
+.owasp-confidence.high {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+
+.owasp-confidence.medium {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+
+.owasp-confidence.review {
+    background: #fefce8;
+    color: #a16207;
+}
+
+
+.owasp-finding-card h3 {
+    margin: 13px 0 7px;
+
+    color: #1e293b;
+
+    font-size: 15px;
+}
+
+
+.owasp-finding-description {
+    margin: 0 0 13px;
+
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+.owasp-location,
+.owasp-evidence,
+.owasp-recommendation {
+    margin-top: 11px;
+}
+
+
+.owasp-location span,
+.owasp-evidence span,
+.owasp-recommendation span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #64748b;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: .8px;
+}
+
+
+.owasp-location strong {
+    font-size: 10px;
+
+    color: #334155;
+
+    word-break: break-word;
+}
+
+
+.owasp-evidence code {
+    display: block;
+
+    padding: 9px 11px;
+
+    border-radius: 7px;
+
+    background: #f8fafc;
+
+    color: #334155;
+
+    font-size: 10px;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+
+.owasp-recommendation {
+    padding: 11px;
+
+    border-radius: 8px;
+
+    background: #f0fdf4;
+}
+
+
+.owasp-recommendation p {
+    margin: 0;
+
+    color: #166534;
+
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+
+.owasp-empty {
+    margin: 20px 24px 24px;
+    padding: 20px;
+
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+
+    color: #64748b;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 950px) {
+
+    .owasp-overview-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .owasp-severity-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 680px) {
+
+    .owasp-overview-grid,
+    .owasp-category-grid,
+    .owasp-severity-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .owasp-finding-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}

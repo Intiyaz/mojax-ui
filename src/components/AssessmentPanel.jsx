@@ -18,6 +18,9 @@ import JavaMigrationPlannerReport
 import SpringBootAssessmentReport
     from "./springboot/SpringBootAssessmentReport";
 
+import OwaspSecurityReport
+    from "./owasp/OwaspSecurityReport";
+
 
 function StatusBadge({ status }) {
 
@@ -55,6 +58,9 @@ export default function AssessmentPanel({
         assessment.agentCode ===
         "PQC_MIGRATION";
 
+    const isOwaspSecurity =
+    assessment.agentCode ===
+    "OWASP_SECURITY";
 
     const isSpringBootUpgrade =
         assessment.agentCode ===
@@ -105,17 +111,25 @@ export default function AssessmentPanel({
 
     const readinessTitle =
         isPqcMigration
+
             ? "PQC Readiness"
-            : isSpringBootUpgrade
-                ? "Spring Boot Readiness"
+
+            : isOwaspSecurity
+
+                ? "Security Readiness"
+
                 : "Java 21 Readiness";
 
 
     const riskTitle =
         isPqcMigration
+
             ? "Quantum Migration Risk"
-            : isSpringBootUpgrade
-                ? "Spring Boot Migration Risk"
+
+            : isOwaspSecurity
+
+                ? "Security Risk"
+
                 : "Migration Risk";
 
 
@@ -128,8 +142,10 @@ export default function AssessmentPanel({
     const assessmentTitle =
         isPqcMigration
             ? "Post-Quantum Cryptography Assessment"
-            : isSpringBootUpgrade
-                ? "Spring Boot Upgrade Assessment"
+
+            : isOwaspSecurity
+                ? "OWASP Top 10 Security Assessment"
+
                 : formatName(
                     assessment.agentCode
                 );
@@ -405,6 +421,29 @@ export default function AssessmentPanel({
 
                 )}
 
+                {/* =====================================================
+                    OWASP REPORT
+                   ===================================================== */}
+
+                {
+                    isOwaspSecurity && (
+
+                        <section
+                            data-report-search
+                        >
+
+                            <OwaspSecurityReport
+
+                                metrics={
+                                    assessment.metrics
+                                    || {}
+                                }
+
+                            />
+
+                        </section>
+                    )
+                }
 
                 {/* =====================================================
                     PQC REPORT
