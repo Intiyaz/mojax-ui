@@ -3822,7 +3822,7 @@ header p {
 
   letter-spacing: 0.08em;
 
-  color: #800909;
+  color: #4b0666;
 }
 
 .settings-grid {
@@ -4104,7 +4104,7 @@ header p {
 
   letter-spacing: 0.07em;
 
-  color: #6672a3;
+  color: #4b0666;
 }
 
 .agent-category {
@@ -8406,7 +8406,7 @@ header p {
 }
 
 .agent-code {
-    color: #800909;
+    color: #4b0666;
 
     font-size: 20px;
     font-weight: 900;
@@ -12954,7 +12954,7 @@ header p {
 }
 
 .agent-card-security::before {
-    background: linear-gradient(90deg, #1F0954, #1F0954);
+    background: linear-gradient(90deg, #FFFF00, #FFFF00);
 }
 
 .agent-card-default::before {
